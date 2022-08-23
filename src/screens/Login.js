@@ -6,8 +6,9 @@ import {
   TextInput,
   Image,
   StatusBar,
-  TouchableOpacity,
 } from 'react-native';
+import Snackbar from 'react-native-snackbar';
+import {useNavigation} from '@react-navigation/native';
 
 import images from '../constants/images';
 import Header from '../components/Header';
@@ -17,20 +18,28 @@ const Login = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigation = useNavigation();
+
   return (
     <View
       style={{
         flex: 1,
-        marginTop: StatusBar.currentHeight + 80,
+        backgroundColor: '#F5F5F5',
       }}>
       <Header />
       <ScrollView
+        keyboardShouldPersistTaps='always'
         contentContainerStyle={{flexGrow: 1}}
         showsHorizontalScrollIndicator={false}>
         <Image
           resizeMode="contain"
           source={images.logo}
-          style={{width: 188, height: 68, alignSelf: 'center'}}
+          style={{
+            width: 188,
+            height: 68,
+            alignSelf: 'center',
+            marginTop: StatusBar.currentHeight + 80,
+          }}
         />
         <View style={{marginHorizontal: 20, marginVertical: 50}}>
           <View>
@@ -110,10 +119,9 @@ const Login = () => {
               <TextInput
                 placeholder="**********"
                 placeholderTextColor="#C8C8C8"
-                keyboardType="visible-password"
                 secureTextEntry={true}
                 value={password}
-                onChange={password => setPassword(password)}
+                onChangeText={password => setPassword(password)}
                 style={{
                   flexGrow: 1,
                   padding: 0,
@@ -137,7 +145,20 @@ const Login = () => {
             </Text>
           </TouchableOpacity> */}
           <View style={{marginTop: 40}}>
-            <Button title="Login" />
+            <Button
+              onClick={() => {
+                if (userName && password) {
+                  navigation.navigate('UploadDocument');
+                } else {
+                  Snackbar.show({
+                    text: 'Please fill all fields',
+                    duration: Snackbar.LENGTH_SHORT,
+                    backgroundColor: '#575DFB',
+                  });
+                }
+              }}
+              title="Login"
+            />
           </View>
         </View>
       </ScrollView>
