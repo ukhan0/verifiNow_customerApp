@@ -1,19 +1,20 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
   ScrollView,
-  TextInput,
   Image,
   StatusBar,
-  TouchableOpacity,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
 const UploadDocument = () => {
+  const navigation = useNavigation();
+
   return (
     <View
       style={{
@@ -86,6 +87,7 @@ const UploadDocument = () => {
           </View>
           <Button
             title="Capture"
+            onClick={() => navigation.navigate('VoiceScreen')}
             style={{marginVertical: 80, backgroundColor: '#E60000'}}
           />
         </View>

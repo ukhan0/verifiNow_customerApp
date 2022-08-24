@@ -4,5 +4,6 @@ export default {
   cross: require('./../assets/images/cross.png'),
   capture: require('./../assets/images/capture.png'),
   password: require('./../assets/images/password.png'),
+  recording: require('./../assets/images/recording.png'),
   documentScan: require('./../assets/images/documentScan.png'),
 }
