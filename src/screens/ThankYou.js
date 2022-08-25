@@ -1,10 +1,13 @@
 import React from 'react';
 import {View, Text, StatusBar} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
 
 const ThankYou = () => {
+  const navigation = useNavigation();
+  
   return (
     <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
       <Header />
@@ -41,7 +44,7 @@ const ThankYou = () => {
           Your ID has been verified and you can stat using our service.
         </Text>
         <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 40}}>
-          <Button title='Start using our Serivce' style={{}} />
+          <Button onClick={() => navigation.navigate('CustomerSupport')} title='Start using our Serivce' style={{}} />
         </View>
       </View>
     </View>

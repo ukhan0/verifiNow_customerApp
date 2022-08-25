@@ -1,7 +1,8 @@
 import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, Image} from 'react-native';
+import images from '../constants/images';
 
-const Button = ({title, style, textStyle, onClick}) => {
+const Button = ({title, style, textStyle, onClick, icon, tintColor}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -13,9 +14,17 @@ const Button = ({title, style, textStyle, onClick}) => {
           height: 56,
           justifyContent: 'center',
           borderRadius: 16,
+          flexDirection: 'row',
         },
         style,
       ]}>
+      {icon && (
+        <Image
+          resizeMode="contain"
+          source={images.call}
+          style={[{width: 14, height: 14, marginRight: 7}, {tintColor: tintColor}]}
+        />
+      )}
       <Text
         style={[
           {

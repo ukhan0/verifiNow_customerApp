@@ -6,6 +6,7 @@ import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
 import VoiceScreen from './src/screens/VoiceScreen';
 import UploadDocument from './src/screens/UploadDocument';
+import CustomerSupport from './src/screens/CustomerSupport';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,11 @@ const AppContainer = () => {
           <Stack.Screen
             name="ThankYou"
             component={ThankYou}
+            options={{animationEnabled: false, headerShown: false}}
+          />
+          <Stack.Screen
+            name="CustomerSupport"
+            component={CustomerSupport}
             options={{animationEnabled: false, headerShown: false}}
           />
         </Stack.Navigator>

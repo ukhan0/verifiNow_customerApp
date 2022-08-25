@@ -149,6 +149,8 @@ const Login = () => {
               onClick={() => {
                 if (userName && password) {
                   navigation.navigate('UploadDocument');
+                  setUserName('');
+                  setPassword('');
                 } else {
                   Snackbar.show({
                     text: 'Please fill all fields',
