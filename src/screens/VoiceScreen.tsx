@@ -1,4 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Component} from 'react';
+import AudioRecorderPlayer, {
+  AVEncoderAudioQualityIOSType,
+  AVEncodingOption,
+  AudioEncoderAndroidType,
+  AudioSet,
+  AudioSourceAndroidType,
+  PlayBackType,
+  RecordBackType,
+} from 'react-native-audio-recorder-player';
 import {
   View,
   Text,
@@ -6,116 +15,53 @@ import {
   Platform,
   StatusBar,
   ScrollView,
+  Dimensions,
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
-const VoiceScreen = () => {
-  const [startRecording, setStartRecording] = useState(true);
-  const [stopRecording, setStopRecording] = useState(false);
-  const [listenRecording, setListenRecording] = useState(false);
+interface State {
+  stopRecording: boolean,
+  startRecording: boolean,
+  listenRecording: boolean,
+}
 
-  const audioRecorderPlayer = new AudioRecorderPlayer();
-  const navigation = useNavigation();
+class VoiceScreen extends Component<any, State> {
 
-  const onStartRecord = async () => {
-    const result = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener(e => {
-      // setState({
-      //   recordSecs: e.currentPosition,
-      //   recordTime: audioRecorderPlayer.mmssss(
-      //     Math.floor(e.currentPosition),
-      //   ),
-      // });
-      // return;
-    });
-    console.log(result);
-  };
+  private audioRecorderPlayer: AudioRecorderPlayer;
 
-  const onStopRecord = async () => {
-    const result = await audioRecorderPlayer.stopRecorder();
-    audioRecorderPlayer.removeRecordBackListener();
-    // setState({
-    //   recordSecs: 0,
-    // });
-    console.log(result);
-  };
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      stopRecording: false,
+      startRecording: true,
+      listenRecording: false,
 
-  const onStartPlay = async () => {
-    console.log('onStartPlay');
-    const msg = await audioRecorderPlayer.startPlayer();
-    console.log(msg);
-    audioRecorderPlayer.addPlayBackListener(e => {
-      // setState({
-      //   currentPositionSec: e.currentPosition,
-      //   currentDurationSec: e.duration,
-      //   playTime: audioRecorderPlayer.mmssss(
-      //     Math.floor(e.currentPosition),
-      //   ),
-      //   duration: audioRecorderPlayer.mmssss(Math.floor(e.duration)),
-      // });
-      return;
-    });
-  };
+    };
 
-  const onPausePlay = async () => {
-    await audioRecorderPlayer.pausePlayer();
-  };
+    this.audioRecorderPlayer = new AudioRecorderPlayer();
+    this.audioRecorderPlayer.setSubscriptionDuration(0.1);
+  }
 
-  const onStopPlay = async () => {
-    console.log('onStopPlay');
-    audioRecorderPlayer.stopPlayer();
-    audioRecorderPlayer.removePlayBackListener();
-  };
+  public render() {
 
-  const permissionFunction = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const grants = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        ]);
-
-        console.log('write external stroage', grants);
-
-        if (
-          grants['android.permission.RECORD_AUDIO'] ===
-          PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          console.log('Permissions granted');
-        } else {
-          console.log('All required permissions not granted');
-          return;
-        }
-      } catch (err) {
-        console.warn(err);
-        return;
-      }
-    }
-  });
-
-  useEffect(() => {
-    permissionFunction();
-  }, [permissionFunction]);
-
-  return (
-    <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+    return (
+      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
       <Header />
       <View
         style={{
           flex: 1,
-          marginTop: StatusBar.currentHeight + 30,
+          marginTop: StatusBar?.currentHeight + 30,
           marginHorizontal: 20,
         }}>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
           showsVerticalScrollIndicator={false}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
             <Image
               resizeMode="contain"
               source={images.cross}
@@ -148,13 +94,15 @@ const VoiceScreen = () => {
               }}>
               “Hi, my name is Maria.I am Customer of American Express.”
             </Text>
-            {startRecording ? (
+            {this.state.startRecording ? (
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                  setStopRecording(true);
-                  setStartRecording(false);
-                  // onStartRecord()
+                  this.setState({
+                    stopRecording: true,
+                    startRecording: false
+                  })
+                  this.onStartRecord();
                 }}
                 style={{
                   width: 160,
@@ -176,7 +124,7 @@ const VoiceScreen = () => {
                   Record
                 </Text>
               </TouchableOpacity>
-            ) : stopRecording ? (
+            ) : this.state.stopRecording ? (
               <View style={{alignItems: 'center'}}>
                 <Image
                   resizeMode="contain"
@@ -186,9 +134,11 @@ const VoiceScreen = () => {
                 <Button
                   title="Stop"
                   onClick={() => {
-                    setStopRecording(false);
-                    setListenRecording(true);
-                    // onStopRecord();
+                    this.setState({
+                      stopRecording: false,
+                      listenRecording: true
+                    })
+                    this.onStopRecord();
                   }}
                   style={{
                     width: 120,
@@ -197,7 +147,7 @@ const VoiceScreen = () => {
                   }}
                 />
               </View>
-            ) : listenRecording ? (
+            ) : this.state.listenRecording ? (
               <>
                 <Image
                   resizeMode="contain"
@@ -211,9 +161,7 @@ const VoiceScreen = () => {
                     justifyContent: 'center',
                     marginTop: 40,
                   }}>
-                  <TouchableOpacity
-                  // onPress={() => onStartPlay()}
-                  >
+                  <TouchableOpacity onPress={() => this.onStartPlay()}>
                     <Text
                       style={{
                         fontSize: 16,
@@ -233,8 +181,11 @@ const VoiceScreen = () => {
                   />
                   <TouchableOpacity
                     onPress={() => {
-                      setListenRecording(false);
-                      setStartRecording(true);
+                      this.setState({
+                        listenRecording: false,
+                        startRecording: true
+                      });
+                      this.onStopPlay();
                     }}>
                     <Text
                       style={{
@@ -248,7 +199,10 @@ const VoiceScreen = () => {
                 </View>
                 <Button
                   title="Submit"
-                  onClick={() => navigation.navigate('ThankYou')}
+                  onClick={() => {
+                    this.onStopRecord();
+                    this.props.navigation.navigate('ThankYou');
+                  }}
                   style={{
                     width: 255,
                     backgroundColor: '#575DFB',
@@ -262,7 +216,78 @@ const VoiceScreen = () => {
         </ScrollView>
       </View>
     </View>
-  );
-};
+    );
+  }
+
+  private onStartRecord = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const grants = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+
+        console.log('write external stroage', grants);
+
+        if (
+          grants['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          grants['android.permission.READ_EXTERNAL_STORAGE'] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          grants['android.permission.RECORD_AUDIO'] ===
+            PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          console.log('permissions granted');
+        } else {
+          console.log('All required permissions not granted');
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
+    const audioSet: AudioSet = {
+      AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+      AudioSourceAndroid: AudioSourceAndroidType.MIC,
+      AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+      AVNumberOfChannelsKeyIOS: 2,
+      AVFormatIDKeyIOS: AVEncodingOption.aac,
+    };
+    //? Default path
+    const uri = await this.audioRecorderPlayer.startRecorder(
+      undefined,
+      audioSet,
+    );
+
+    this.audioRecorderPlayer.addRecordBackListener((e: RecordBackType) => {
+      console.log('record-back', e);
+    });
+    console.log(`uri: ${uri}`);
+  };
+
+  private onStopRecord = async () => {
+    const result = await this.audioRecorderPlayer.stopRecorder();
+    this.audioRecorderPlayer.removeRecordBackListener();
+    console.log(result);
+  };
+
+  private onStartPlay = async () => {
+    //? Default path
+    const msg = await this.audioRecorderPlayer.startPlayer();
+    const volume = await this.audioRecorderPlayer.setVolume(1.0);
+
+    this.audioRecorderPlayer.addPlayBackListener((e: PlayBackType) => {
+      console.log(e);
+    });
+  };
+
+  private onStopPlay = async () => {
+    this.audioRecorderPlayer.stopPlayer();
+    this.audioRecorderPlayer.removePlayBackListener();
+  };
+}
 
 export default VoiceScreen;
