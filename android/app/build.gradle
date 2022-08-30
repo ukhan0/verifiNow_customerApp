@@ -139,6 +139,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -255,7 +256,19 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+    maven { url 'https://maven.google.com/' }
+    maven { url 'https://mobile-sdk.jumio.com' }
+	// Android JSC is installed from npm
+    maven {
+        // Android JSC is installed from npm
+        url("$rootDir/../node_modules/jsc-android/dist")
+    }
+}
+
 dependencies {
+    implementation project(':react-native-jumio-mobilesdk')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion

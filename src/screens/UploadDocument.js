@@ -5,6 +5,8 @@ import {
   ScrollView,
   Image,
   StatusBar,
+  NativeModules,
+  NativeEventEmitter,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -12,8 +14,28 @@ import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
+const {JumioMobileSDK} = NativeModules;
+
 const UploadDocument = () => {
   const navigation = useNavigation();
+
+  // Jumio SDK
+  const startJumio = () => {
+    JumioMobileSDK.initialize(
+      'eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAAAJXOQQoCMQyF4bt0bSB1mjZxJ0MFFypUXUsmbU8gKIh3d0ZP4Pb93-K9XHtu727jfIye04CEkZNbOTXb13lPpIzCBByDQqjCwI0GYDPusa59CH7hXxwn7CmsCUS5QeBpAokoQJjUlIyo44wfvf3DrbQ-6_F6vpwOudxK3uWSj2Ne2u9kH0wTIyDHCkFYQVvzQJ6xiniqg7j3B95hdInsAAAA.4NA_65p7tGDulf1n9SLwmYpqEL4YinZ9Pml0w-Sd0mNdMTnsSCG3TEG6tZnNoi2xCytkHNcjjhKeZpMt5VFUPA',
+      'US',
+    );
+    JumioMobileSDK.start();
+  };
+
+  // Callbacks - (Data is displayed as a warning for demo purposes)
+  const emitterJumio = new NativeEventEmitter(JumioMobileSDK);
+  emitterJumio.addListener('EventResult', EventResult =>
+    console.warn('EventResult: ' + JSON.stringify(EventResult)),
+  );
+  emitterJumio.addListener('EventError', EventError =>
+    console.warn('EventError: ' + JSON.stringify(EventError)),
+  );
 
   return (
     <View
@@ -87,7 +109,8 @@ const UploadDocument = () => {
           </View>
           <Button
             title="Capture"
-            onClick={() => navigation.navigate('VoiceScreen')}
+            // onClick={() => navigation.navigate('VoiceScreen')}
+            onClick={() => startJumio()}
             style={{marginVertical: 80, backgroundColor: '#E60000'}}
           />
         </View>
