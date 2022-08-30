@@ -15,7 +15,6 @@ import {
   Platform,
   StatusBar,
   ScrollView,
-  Dimensions,
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
@@ -25,13 +24,13 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 
 interface State {
-  stopRecording: boolean,
-  startRecording: boolean,
-  listenRecording: boolean,
+  stopRecording: boolean;
+  startRecording: boolean;
+  listenRecording: boolean;
+  // audioUri: string
 }
 
 class VoiceScreen extends Component<any, State> {
-
   private audioRecorderPlayer: AudioRecorderPlayer;
 
   constructor(props: any) {
@@ -40,7 +39,7 @@ class VoiceScreen extends Component<any, State> {
       stopRecording: false,
       startRecording: true,
       listenRecording: false,
-
+      // audioUri: '',
     };
 
     this.audioRecorderPlayer = new AudioRecorderPlayer();
@@ -51,171 +50,171 @@ class VoiceScreen extends Component<any, State> {
 
     return (
       <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-      <Header />
-      <View
-        style={{
-          flex: 1,
-          marginTop: StatusBar?.currentHeight + 30,
-          marginHorizontal: 20,
-        }}>
-        <ScrollView
-          contentContainerStyle={{flexGrow: 1}}
-          showsVerticalScrollIndicator={false}>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Image
-              resizeMode="contain"
-              source={images.cross}
-              style={{width: 16, height: 16}}
-            />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: 'Roboto-Medium',
-              color: '#000',
-              marginLeft: 10,
-              marginTop: 50,
-            }}>
-            Record your voice
-          </Text>
-          <View
-            style={{
-              flexGrow: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+        <Header />
+        <View
+          style={{
+            flex: 1,
+            marginTop: StatusBar?.currentHeight + 30,
+            marginHorizontal: 20,
+          }}>
+          <ScrollView
+            contentContainerStyle={{flexGrow: 1}}
+            showsVerticalScrollIndicator={false}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Image
+                resizeMode="contain"
+                source={images.cross}
+                style={{width: 16, height: 16}}
+              />
+            </TouchableOpacity>
             <Text
               style={{
                 fontSize: 20,
-                fontFamily: 'Roboto-Regular',
+                fontFamily: 'Roboto-Medium',
                 color: '#000',
-                textAlign: 'center',
-                marginHorizontal: 40,
+                marginLeft: 10,
+                marginTop: 50,
               }}>
-              “Hi, my name is Maria.I am Customer of American Express.”
+              Record your voice
             </Text>
-            {this.state.startRecording ? (
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                  this.setState({
-                    stopRecording: true,
-                    startRecording: false
-                  })
-                  this.onStartRecord();
-                }}
+            <View
+              style={{
+                flexGrow: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
                 style={{
-                  width: 160,
-                  height: 160,
-                  backgroundColor: '#E60000',
-                  borderRadius: 160,
-                  borderWidth: 5,
-                  borderColor: '#000',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginVertical: 60,
+                  fontSize: 20,
+                  fontFamily: 'Roboto-Regular',
+                  color: '#000',
+                  textAlign: 'center',
+                  marginHorizontal: 40,
                 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Roboto-Medium',
-                    color: '#fff',
-                  }}>
-                  Record
-                </Text>
-              </TouchableOpacity>
-            ) : this.state.stopRecording ? (
-              <View style={{alignItems: 'center'}}>
-                <Image
-                  resizeMode="contain"
-                  source={images.recording}
-                  style={{width: 160, height: 160, marginTop: 60}}
-                />
-                <Button
-                  title="Stop"
-                  onClick={() => {
+                “Hi, my name is Maria.I am Customer of American Express.”
+              </Text>
+              {this.state.startRecording ? (
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => {
                     this.setState({
-                      stopRecording: false,
-                      listenRecording: true
-                    })
-                    this.onStopRecord();
+                      stopRecording: true,
+                      startRecording: false,
+                    });
+                    this.onStartRecord();
                   }}
                   style={{
-                    width: 120,
+                    width: 160,
+                    height: 160,
                     backgroundColor: '#E60000',
-                    marginVertical: 40,
-                  }}
-                />
-              </View>
-            ) : this.state.listenRecording ? (
-              <>
-                <Image
-                  resizeMode="contain"
-                  source={images.recording}
-                  style={{width: 160, height: 160, marginTop: 60}}
-                />
-                <View
-                  style={{
-                    flexDirection: 'row',
+                    borderRadius: 160,
+                    borderWidth: 5,
+                    borderColor: '#000',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginTop: 40,
+                    marginVertical: 60,
                   }}>
-                  <TouchableOpacity onPress={() => this.onStartPlay()}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontFamily: 'Roboto-Medium',
-                        color: '#E60000',
-                      }}>
-                      Listen
-                    </Text>
-                  </TouchableOpacity>
-                  <View
+                  <Text
                     style={{
-                      height: 40,
-                      width: 1,
-                      backgroundColor: '#C8C8C8',
-                      marginHorizontal: 35,
+                      fontSize: 16,
+                      fontFamily: 'Roboto-Medium',
+                      color: '#fff',
+                    }}>
+                    Record
+                  </Text>
+                </TouchableOpacity>
+              ) : this.state.stopRecording ? (
+                <View style={{alignItems: 'center'}}>
+                  <Image
+                    resizeMode="contain"
+                    source={images.recording}
+                    style={{width: 160, height: 160, marginTop: 60}}
+                  />
+                  <Button
+                    title="Stop"
+                    onClick={() => {
+                      this.setState({
+                        stopRecording: false,
+                        listenRecording: true,
+                      });
+                      this.onStopRecord();
+                    }}
+                    style={{
+                      width: 120,
+                      backgroundColor: '#E60000',
+                      marginVertical: 40,
                     }}
                   />
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState({
-                        listenRecording: false,
-                        startRecording: true
-                      });
-                      this.onStopPlay();
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontFamily: 'Roboto-Medium',
-                        color: '#000',
-                      }}>
-                      Re-record
-                    </Text>
-                  </TouchableOpacity>
                 </View>
-                <Button
-                  title="Submit"
-                  onClick={() => {
-                    this.onStopRecord();
-                    this.props.navigation.navigate('ThankYou');
-                  }}
-                  style={{
-                    width: 255,
-                    backgroundColor: '#575DFB',
-                    marginTop: 70,
-                    marginBottom: 30,
-                  }}
-                />
-              </>
-            ) : null}
-          </View>
-        </ScrollView>
+              ) : this.state.listenRecording ? (
+                <>
+                  <Image
+                    resizeMode="contain"
+                    source={images.recording}
+                    style={{width: 160, height: 160, marginTop: 60}}
+                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 40,
+                    }}>
+                    <TouchableOpacity onPress={() => this.onStartPlay()}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontFamily: 'Roboto-Medium',
+                          color: '#E60000',
+                        }}>
+                        Listen
+                      </Text>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        height: 40,
+                        width: 1,
+                        backgroundColor: '#C8C8C8',
+                        marginHorizontal: 35,
+                      }}
+                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState({
+                          listenRecording: false,
+                          startRecording: true,
+                        });
+                        this.onStopPlay();
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontFamily: 'Roboto-Medium',
+                          color: '#000',
+                        }}>
+                        Re-record
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Button
+                    title="Submit"
+                    onClick={() => {
+                      this.onStopRecord();
+                      this.props.navigation.navigate('ThankYou');
+                    }}
+                    style={{
+                      width: 255,
+                      backgroundColor: '#575DFB',
+                      marginTop: 70,
+                      marginBottom: 30,
+                    }}
+                  />
+                </>
+              ) : null}
+            </View>
+          </ScrollView>
+        </View>
       </View>
-    </View>
     );
   }
 
@@ -256,6 +255,11 @@ class VoiceScreen extends Component<any, State> {
       AVNumberOfChannelsKeyIOS: 2,
       AVFormatIDKeyIOS: AVEncodingOption.aac,
     };
+    // const dirs = RNFetchBlob.fs.dirs;
+    // const path = Platform.select({
+    //   ios: 'hello.m4a',
+    //   android: `${dirs.CacheDir}/hello.wav`,
+    // });
     //? Default path
     const uri = await this.audioRecorderPlayer.startRecorder(
       undefined,
@@ -271,6 +275,7 @@ class VoiceScreen extends Component<any, State> {
   private onStopRecord = async () => {
     const result = await this.audioRecorderPlayer.stopRecorder();
     this.audioRecorderPlayer.removeRecordBackListener();
+    // this.setState({audioUri: result});
     console.log(result);
   };
 

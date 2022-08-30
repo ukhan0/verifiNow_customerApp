@@ -1,11 +1,23 @@
 import React, {useState} from 'react';
-import {View, Text, StatusBar, Image, ScrollView, Linking} from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  Image,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 import images from '../constants/images';
 import Button from '../components/Button';
 import Header from '../components/Header';
+import {logout} from '../redux/auth/actions';
 
 const CustomerSupport = () => {
+  const dispatch = useDispatch();
+
   const [showCallButtons, setShowCallButtons] = useState(false);
 
   return (
@@ -14,6 +26,15 @@ const CustomerSupport = () => {
       <ScrollView
         contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          onPress={() => dispatch(logout())}
+          style={{
+            position: 'absolute',
+            top: 50,
+            right: 20,
+          }}>
+          <Image source={images.logout} style={{width: 23, height: 23}} />
+        </TouchableOpacity>
         <View
           style={{
             marginHorizontal: 20,
