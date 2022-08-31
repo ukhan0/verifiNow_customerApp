@@ -16,6 +16,7 @@ import {isUserLoggedIn} from './src/redux/auth/selectors';
 import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
 import VoiceScreen from './src/screens/VoiceScreen';
+import WebViewScreen from './src/screens/WebViewScreen';
 import UploadDocument from './src/screens/UploadDocument';
 import CustomerSupport from './src/screens/CustomerSupport';
 
@@ -37,6 +38,11 @@ const AppContainer = () => {
           <Stack.Screen
             name="UploadDocument"
             component={UploadDocument}
+            options={{animationEnabled: false, headerShown: false}}
+          />
+          <Stack.Screen
+            name="WebViewScreen"
+            component={WebViewScreen}
             options={{animationEnabled: false, headerShown: false}}
           />
           <Stack.Screen

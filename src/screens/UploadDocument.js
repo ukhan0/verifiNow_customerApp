@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   Image,
+  LogBox,
   StatusBar,
   NativeModules,
   NativeEventEmitter,
@@ -16,26 +17,29 @@ import Button from '../components/Button';
 
 const {JumioMobileSDK} = NativeModules;
 
+LogBox.ignoreLogs(["new NativeEventEmitter"]);
+
+// Callbacks - (Data is displayed as a warning for demo purposes)
+const emitterJumio = new NativeEventEmitter(JumioMobileSDK);
+emitterJumio.addListener('EventResult', EventResult =>
+  console.warn('EventResult: ' + JSON.stringify(EventResult)),
+);
+emitterJumio.addListener('EventError', EventError =>
+  console.warn('EventError: ' + JSON.stringify(EventError)),
+);
+
 const UploadDocument = () => {
   const navigation = useNavigation();
 
   // Jumio SDK
   const startJumio = () => {
     JumioMobileSDK.initialize(
-      'eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAAAJXOQQoCMQyF4bt0bSB1mjZxJ0MFFypUXUsmbU8gKIh3d0ZP4Pb93-K9XHtu727jfIye04CEkZNbOTXb13lPpIzCBByDQqjCwI0GYDPusa59CH7hXxwn7CmsCUS5QeBpAokoQJjUlIyo44wfvf3DrbQ-6_F6vpwOudxK3uWSj2Ne2u9kH0wTIyDHCkFYQVvzQJ6xiniqg7j3B95hdInsAAAA.4NA_65p7tGDulf1n9SLwmYpqEL4YinZ9Pml0w-Sd0mNdMTnsSCG3TEG6tZnNoi2xCytkHNcjjhKeZpMt5VFUPA',
+      'eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAAAJXOTQoCMQwF4Lt0baBp0z93MlRwocKoa0kz6QkEBfHudryBmyze-3jkbfS1e5itwRixBHLkHZLZGBY5LCPPRbjjEsFSYaDMFlgxQE6tqy3S2OaV_7Ak55SpQV7SwLK6gAqRMDTXx-068LPrP1xm7UNPt8v1fKzzfa77OtfTVNfuN-Rt7OMbDyHGDITooTVWSMl5sVrESjGfL1JDX6jsAAAA.HtFepNqaB5xi8EjqkUH_ZDuC6FuDgLX8fTzdPL7R_zSTJAsmoZZ7wXBjmD55j69HKoY2AAgt1yRPxTU5f9umdw',
       'US',
     );
     JumioMobileSDK.start();
+    // navigation.navigate('VoiceScreen');
   };
-
-  // Callbacks - (Data is displayed as a warning for demo purposes)
-  const emitterJumio = new NativeEventEmitter(JumioMobileSDK);
-  emitterJumio.addListener('EventResult', EventResult =>
-    console.warn('EventResult: ' + JSON.stringify(EventResult)),
-  );
-  emitterJumio.addListener('EventError', EventError =>
-    console.warn('EventError: ' + JSON.stringify(EventError)),
-  );
 
   return (
     <View
@@ -109,8 +113,7 @@ const UploadDocument = () => {
           </View>
           <Button
             title="Capture"
-            // onClick={() => navigation.navigate('VoiceScreen')}
-            onClick={() => startJumio()}
+            onClick={() => navigation.navigate('WebViewScreen')}
             style={{marginVertical: 80, backgroundColor: '#E60000'}}
           />
         </View>

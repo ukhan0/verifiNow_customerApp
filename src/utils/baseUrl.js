@@ -1,1 +1,1 @@
-export const SERVER_URL = 'http://34.197.192.209';
+export const SERVER_URL = 'https://dev-api.verifinow.io';

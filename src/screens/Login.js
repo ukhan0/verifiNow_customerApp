@@ -121,6 +121,7 @@ const Login = () => {
                   marginRight: email ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
+                  color: '#000'
                 }}
               />
             </View>
@@ -167,6 +168,7 @@ const Login = () => {
                   marginRight: password ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
+                  color: '#000'
                 }}
               />
             </View>
