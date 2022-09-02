@@ -113,7 +113,7 @@ const UploadDocument = () => {
           </View>
           <Button
             title="Capture"
-            onClick={() => navigation.navigate('WebViewScreen')}
+            onClick={() => navigation.navigate('VoiceScreen')}
             style={{marginVertical: 80, backgroundColor: '#E60000'}}
           />
         </View>

@@ -1,16 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 //Redux
-import {createStore} from 'redux';
 import {Provider} from 'react-redux';
-import {persistStore} from 'redux-persist';
 import {PersistGate} from 'redux-persist/integration/react';
 
-import rootReducer from './src/redux/index';
-import Reactotron from './ReactotronConfig';
-import {isUserLoggedIn} from './src/redux/auth/selectors';
+import { store, persistor } from './src/redux/stores/configureStore';
+import {isAudioAuthenticate, isUserLoggedIn} from './src/redux/auth/selectors';
 
 //Screens
 import Login from './src/screens/Login';
@@ -20,21 +17,17 @@ import WebViewScreen from './src/screens/WebViewScreen';
 import UploadDocument from './src/screens/UploadDocument';
 import CustomerSupport from './src/screens/CustomerSupport';
 
-var store;
-
-store = createStore(rootReducer, Reactotron.createEnhancer());
-
-let persistor = persistStore(store);
-
 const Stack = createNativeStackNavigator();
 
 const AppContainer = () => {
   const accessToken = isUserLoggedIn();
+  const audioAuthenticate = isAudioAuthenticate();
+  console.log('audioAuthenticate', audioAuthenticate);
 
-  if (accessToken) {
+  if (accessToken && !audioAuthenticate) {
     return (
       <>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="UploadDocument">
           <Stack.Screen
             name="UploadDocument"
             component={UploadDocument}
@@ -50,6 +43,23 @@ const AppContainer = () => {
             component={VoiceScreen}
             options={{animationEnabled: false, headerShown: false}}
           />
+          <Stack.Screen
+            name="ThankYou"
+            component={ThankYou}
+            options={{animationEnabled: false, headerShown: false}}
+          />
+          <Stack.Screen
+            name="CustomerSupport"
+            component={CustomerSupport}
+            options={{animationEnabled: false, headerShown: false}}
+          />
+        </Stack.Navigator>
+      </>
+    );
+  } else if (accessToken && audioAuthenticate) {
+    return (
+      <>
+        <Stack.Navigator initialRouteName="ThankYou">
           <Stack.Screen
             name="ThankYou"
             component={ThankYou}

@@ -2,7 +2,7 @@ import React from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {useNavigation} from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import Header from '../components/Header';
 
@@ -16,7 +16,9 @@ const ActivityIndicatorElement = () => {
 
 const WebViewScreen = () => {
   const navigation = useNavigation();
-  const jumioOnBoardingLink = useSelector(state => state.auth.customerInfo?.jumio?.web?.href);
+  const jumioOnBoardingLink = useSelector(
+    state => state.auth.customerInfo?.jumio?.web?.href,
+  );
 
   const navigationState = nextState => {
     if (nextState.url.includes('customerJumioSuccess')) {

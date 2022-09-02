@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -14,10 +14,12 @@ import images from '../constants/images';
 import Button from '../components/Button';
 import Header from '../components/Header';
 import {logout} from '../redux/auth/actions';
+import LogoutModal from '../components/LogoutModal';
 
 
 const CustomerSupport = () => {
   const dispatch = useDispatch();
+  const modalRef = useRef();
 
   const [showCallButtons, setShowCallButtons] = useState(false);
 
@@ -28,7 +30,7 @@ const CustomerSupport = () => {
         contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}>
         <TouchableOpacity
-          onPress={() => dispatch(logout())}
+          onPress={() => modalRef.current.getAlert()}
           style={{
             position: 'absolute',
             top: 50,
@@ -36,6 +38,7 @@ const CustomerSupport = () => {
           }}>
           <Image source={images.logout} style={{width: 23, height: 23}} />
         </TouchableOpacity>
+        <LogoutModal ref={modalRef} />
         <View
           style={{
             marginHorizontal: 20,
@@ -85,7 +88,7 @@ const CustomerSupport = () => {
             </>
           )}
         </View>
-        <View
+        {/* <View
           style={{
             flexGrow: 1,
             marginHorizontal: 20,
@@ -134,7 +137,7 @@ const CustomerSupport = () => {
               marginTop: 25,
             }}
           />
-        </View>
+        </View> */}
         {showCallButtons && (
           <View
             style={{
