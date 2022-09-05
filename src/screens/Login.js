@@ -14,7 +14,7 @@ import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import {SERVER_URL} from '../utils/baseUrl';
-import {login, loginfailed, loginSuccess} from '../redux/auth/actions';
+import {audioOnBoard, login, loginfailed, loginSuccess} from '../redux/auth/actions';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -44,6 +44,9 @@ const Login = () => {
       const resp = await response.json();
       if (resp?.data) {
         dispatch(loginSuccess(resp?.data));
+        if (resp?.data?.on_boarding) {
+          dispatch(audioOnBoard(resp?.data?.on_boarding))
+        }
       } else {
         Snackbar.show({
           text: resp?.message,
@@ -87,7 +90,7 @@ const Login = () => {
                 fontFamily: 'Roboto-Regular',
                 color: '#000',
               }}>
-              Name
+              Email
             </Text>
             <View
               style={{

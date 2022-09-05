@@ -1,8 +1,9 @@
-import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS, LOG_OUT} from './types';
+import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS, LOG_OUT, AUDIO_ON_BOARDING} from './types';
 
 const INITIAL_STATE = {
   loading: false,
   customerInfo: {},
+  on_boarding: null
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -15,10 +16,13 @@ export default (state = INITIAL_STATE, action) => {
     case LOGIN_FAILED:
       return {...state, loading: false};
 
+    case AUDIO_ON_BOARDING:
+      return {...state, on_boarding: payload}
+
     case LOG_OUT:
       return INITIAL_STATE;
 
     default:
-      return {...state};
+      return state;
   }
 };

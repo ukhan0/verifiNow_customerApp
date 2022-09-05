@@ -6,15 +6,15 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
-import { store, persistor } from './src/redux/stores/configureStore';
+import {store, persistor} from './src/redux/stores/configureStore';
 import {isAudioAuthenticate, isUserLoggedIn} from './src/redux/auth/selectors';
 
 //Screens
 import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
 import VoiceScreen from './src/screens/VoiceScreen';
-import WebViewScreen from './src/screens/WebViewScreen';
-import UploadDocument from './src/screens/UploadDocument';
+// import WebViewScreen from './src/screens/WebViewScreen';
+// import UploadDocument from './src/screens/UploadDocument';
 import CustomerSupport from './src/screens/CustomerSupport';
 
 const Stack = createNativeStackNavigator();
@@ -22,57 +22,48 @@ const Stack = createNativeStackNavigator();
 const AppContainer = () => {
   const accessToken = isUserLoggedIn();
   const audioAuthenticate = isAudioAuthenticate();
-  console.log('audioAuthenticate', audioAuthenticate);
 
-  if (accessToken && !audioAuthenticate) {
-    return (
-      <>
-        <Stack.Navigator initialRouteName="UploadDocument">
-          <Stack.Screen
-            name="UploadDocument"
-            component={UploadDocument}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-          <Stack.Screen
-            name="WebViewScreen"
-            component={WebViewScreen}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-          <Stack.Screen
-            name="VoiceScreen"
-            component={VoiceScreen}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-          <Stack.Screen
-            name="ThankYou"
-            component={ThankYou}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-          <Stack.Screen
-            name="CustomerSupport"
-            component={CustomerSupport}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-        </Stack.Navigator>
-      </>
-    );
-  } else if (accessToken && audioAuthenticate) {
-    return (
-      <>
-        <Stack.Navigator initialRouteName="ThankYou">
-          <Stack.Screen
-            name="ThankYou"
-            component={ThankYou}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-          <Stack.Screen
-            name="CustomerSupport"
-            component={CustomerSupport}
-            options={{animationEnabled: false, headerShown: false}}
-          />
-        </Stack.Navigator>
-      </>
-    );
+  if (accessToken) {
+    if (!audioAuthenticate) {
+      return (
+        <>
+          <Stack.Navigator initialRouteName="VoiceScreen">
+            {/* <Stack.Screen
+              name="UploadDocument"
+              component={UploadDocument}
+              options={{animationEnabled: false, headerShown: false}}
+            /> */}
+            {/* <Stack.Screen
+              name="WebViewScreen"
+              component={WebViewScreen}
+              options={{animationEnabled: false, headerShown: false}}
+            /> */}
+            <Stack.Screen
+              name="VoiceScreen"
+              component={VoiceScreen}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+            <Stack.Screen
+              name="ThankYou"
+              component={ThankYou}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+          </Stack.Navigator>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="CustomerSupport"
+              component={CustomerSupport}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+          </Stack.Navigator>
+        </>
+      );
+    }
   } else {
     return (
       <>

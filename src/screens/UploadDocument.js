@@ -6,8 +6,6 @@ import {
   Image,
   LogBox,
   StatusBar,
-  NativeModules,
-  NativeEventEmitter,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -15,31 +13,10 @@ import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
-const {JumioMobileSDK} = NativeModules;
-
 LogBox.ignoreLogs(["new NativeEventEmitter"]);
-
-// Callbacks - (Data is displayed as a warning for demo purposes)
-const emitterJumio = new NativeEventEmitter(JumioMobileSDK);
-emitterJumio.addListener('EventResult', EventResult =>
-  console.warn('EventResult: ' + JSON.stringify(EventResult)),
-);
-emitterJumio.addListener('EventError', EventError =>
-  console.warn('EventError: ' + JSON.stringify(EventError)),
-);
 
 const UploadDocument = () => {
   const navigation = useNavigation();
-
-  // Jumio SDK
-  const startJumio = () => {
-    JumioMobileSDK.initialize(
-      'eyJhbGciOiJIUzUxMiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAAAJXOTQoCMQwF4Lt0baBp0z93MlRwocKoa0kz6QkEBfHudryBmyze-3jkbfS1e5itwRixBHLkHZLZGBY5LCPPRbjjEsFSYaDMFlgxQE6tqy3S2OaV_7Ak55SpQV7SwLK6gAqRMDTXx-068LPrP1xm7UNPt8v1fKzzfa77OtfTVNfuN-Rt7OMbDyHGDITooTVWSMl5sVrESjGfL1JDX6jsAAAA.HtFepNqaB5xi8EjqkUH_ZDuC6FuDgLX8fTzdPL7R_zSTJAsmoZZ7wXBjmD55j69HKoY2AAgt1yRPxTU5f9umdw',
-      'US',
-    );
-    JumioMobileSDK.start();
-    // navigation.navigate('VoiceScreen');
-  };
 
   return (
     <View

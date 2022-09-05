@@ -6,24 +6,22 @@ import {
   Platform,
   StatusBar,
   ScrollView,
+  BackHandler,
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
 import Sound from 'react-native-sound';
 import Snackbar from 'react-native-snackbar';
 import AudioRecord from 'react-native-audio-record';
-import { useSelector, useDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import {SERVER_URL} from '../utils/baseUrl';
-import { loginSuccess } from '../redux/auth/actions';
 import {isUserLoggedIn} from '../redux/auth/selectors';
 
 const VoiceScreen = () => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const token = isUserLoggedIn();
@@ -33,8 +31,6 @@ const VoiceScreen = () => {
   const [startRecording, setStartRecording] = useState(true);
   const [listenRecording, setListenRecording] = useState(false);
   const [playSuccessfully, setPlaySuccessfully] = useState(false);
-
-  const userInfo = useSelector(state => state.auth.customerInfo);
 
   const [audioFile, setAudioFile] = useState('');
   var audioSound;
@@ -67,7 +63,6 @@ const VoiceScreen = () => {
           grants['android.permission.RECORD_AUDIO'] ===
           PermissionsAndroid.RESULTS.GRANTED
         ) {
-          setPlaySuccessfully(false);
           AudioRecord.start();
           console.log('Permissions granted');
         } else {
@@ -87,8 +82,10 @@ const VoiceScreen = () => {
   };
 
   const playAudio = () => {
+    setPlaySuccessfully(true);
     audioSound = new Sound(audioFile, Sound.MAIN_BUNDLE, error => {
       if (error) {
+        setPlaySuccessfully(false);
         console.log('failed to load the sound', error);
         return;
       }
@@ -96,9 +93,10 @@ const VoiceScreen = () => {
       // Play the sound with an onEnd callback
       audioSound.play(success => {
         if (success) {
+          setPlaySuccessfully(false);
           console.log('successfully finished playing');
-          setPlaySuccessfully(true);
         } else {
+          setPlaySuccessfully(false);
           console.log('playback failed due to audio decoding errors');
         }
       });
@@ -131,11 +129,11 @@ const VoiceScreen = () => {
         body: formData,
       });
       const resp = await response.json();
-      console.log('response', resp);
       if (resp?.data) {
-        userInfo.on_boarding = resp?.data;
-        dispatch(loginSuccess(userInfo));
-        navigation.navigate('ThankYou');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'ThankYou', params: {response: resp?.data}}],
+        });
       } else {
         Snackbar.show({
           text: resp?.message,
@@ -162,7 +160,7 @@ const VoiceScreen = () => {
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
           showsVerticalScrollIndicator={false}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => BackHandler.exitApp()}>
             <Image
               resizeMode="contain"
               source={images.cross}
@@ -225,11 +223,22 @@ const VoiceScreen = () => {
               </TouchableOpacity>
             ) : stopRecording ? (
               <View style={{alignItems: 'center'}}>
-                <Image
-                  resizeMode="contain"
-                  source={images.recording}
-                  style={{width: 160, height: 160, marginTop: 60}}
-                />
+                <View
+                  style={{
+                    width: 160,
+                    height: 160,
+                    borderRadius: 160,
+                    borderWidth: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 60,
+                  }}>
+                  <Image
+                    resizeMode="contain"
+                    source={images.wave}
+                    style={{width: 120, height: 130}}
+                  />
+                </View>
                 <Button
                   title="Stop"
                   onClick={() => {
@@ -246,11 +255,30 @@ const VoiceScreen = () => {
               </View>
             ) : listenRecording ? (
               <>
-                <Image
-                  resizeMode="contain"
-                  source={images.recording}
-                  style={{width: 160, height: 160, marginTop: 60}}
-                />
+                {playSuccessfully ? (
+                  <View
+                    style={{
+                      width: 160,
+                      height: 160,
+                      borderRadius: 160,
+                      borderWidth: 5,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 60,
+                    }}>
+                    <Image
+                      resizeMode="contain"
+                      source={images.wave}
+                      style={{width: 120, height: 130}}
+                    />
+                  </View>
+                ) : (
+                  <Image
+                    resizeMode="contain"
+                    source={images.recording}
+                    style={{width: 160, height: 160, marginTop: 60}}
+                  />
+                )}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -278,9 +306,6 @@ const VoiceScreen = () => {
                   />
                   <TouchableOpacity
                     onPress={() => {
-                      if (!playSuccessfully) {
-                        stopPlay();
-                      }
                       setStartRecording(true);
                       setListenRecording(false);
                     }}>
