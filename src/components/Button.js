@@ -8,11 +8,21 @@ import {
 } from 'react-native';
 import images from '../constants/images';
 
-const Button = ({title, style, textStyle, onClick, icon, tintColor, loading}) => {
+const Button = ({
+  title,
+  style,
+  textStyle,
+  onClick,
+  icon,
+  tintColor,
+  loading,
+  disable,
+}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={onClick}
+      disabled={disable}
       style={[
         {
           backgroundColor: '#575DFB',

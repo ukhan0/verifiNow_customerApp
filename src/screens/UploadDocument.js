@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Image,
-  LogBox,
   StatusBar,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -12,8 +11,6 @@ import {useNavigation} from '@react-navigation/native';
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
-
-LogBox.ignoreLogs(["new NativeEventEmitter"]);
 
 const UploadDocument = () => {
   const navigation = useNavigation();
