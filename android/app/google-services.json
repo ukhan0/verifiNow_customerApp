@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "510104556697",
+    "project_id": "verifinow",
+    "storage_bucket": "verifinow.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510104556697:android:d73ac02fd492865f089408",
+        "android_client_info": {
+          "package_name": "com.verifinow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "510104556697-3tkf82p2s2ikbjf3ou58hnsp9tqaurmp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjoswCHq7a0oNbq_P32HSXokUUT2jI_R0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "510104556697-3tkf82p2s2ikbjf3ou58hnsp9tqaurmp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

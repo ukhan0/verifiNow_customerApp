@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LogBox } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
+import PushNotification from 'react-native-push-notification';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 //Redux
@@ -82,6 +84,41 @@ const AppContainer = () => {
 
 function App() {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
+  
+  const notifyChannel = () => {
+    PushNotification.createChannel(
+      {
+        channelId: "verifinow", 
+        channelName: "General", 
+        channelDescription: "General Channel", 
+        playSound: true, 
+        soundName: "default",
+        vibrate: true, 
+      },
+      (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+    );
+  }
+
+  useEffect(() => {
+    notifyChannel();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      PushNotification.localNotification({
+        channelId: 'verifinow',
+        title: remoteMessage.notification.title, // (optional)
+        message: '', // (required)
+        data: remoteMessage.notification.title,
+      });
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      console.log('FCM token =>', await messaging().getToken());
+    })();
+  },[])
+
+
 
   return (
     <Provider store={store}>

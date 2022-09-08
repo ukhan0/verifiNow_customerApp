@@ -121,8 +121,6 @@ const VoiceScreen = () => {
   const uploadAudioVoice = async () => {
     try {
       setShowLoading(true);
-      console.log('audioFile', audioFile);
-      return true;
       var formData = new FormData();
       formData.append('media_type', 'AUDIO_ONBOARDING');
       formData.append('file', {
