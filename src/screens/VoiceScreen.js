@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Sound from 'react-native-sound';
+import { useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import AudioRecord from 'react-native-audio-record';
 import {useNavigation} from '@react-navigation/native';
@@ -25,6 +26,8 @@ const VoiceScreen = () => {
   const navigation = useNavigation();
 
   const token = isUserLoggedIn();
+
+  const userInfo = useSelector(state => state.auth?.customerInfo);
 
   const [showLoading, setShowLoading] = useState(false);
   const [stopRecording, setStopRecording] = useState(false);
@@ -191,7 +194,7 @@ const VoiceScreen = () => {
                 textAlign: 'center',
                 marginHorizontal: 40,
               }}>
-              “Hi, my name is Maria.I am Customer of American Express.”
+              “Hi, my name is {userInfo?.name}.I am Customer of American Express.”
             </Text>
             {startRecording ? (
               <TouchableOpacity
@@ -321,6 +324,7 @@ const VoiceScreen = () => {
                 </View>
                 <Button
                   title="Submit"
+                  disable={playSuccessfully}
                   loading={showLoading}
                   onClick={() => {
                     uploadAudioVoice();

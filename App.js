@@ -1,4 +1,5 @@
 import React from 'react';
+import { LogBox } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
@@ -80,6 +81,8 @@ const AppContainer = () => {
 };
 
 function App() {
+  LogBox.ignoreLogs(['new NativeEventEmitter']);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

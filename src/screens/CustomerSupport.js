@@ -8,20 +8,20 @@ import {
   Linking,
   TouchableOpacity,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import images from '../constants/images';
 import Button from '../components/Button';
 import Header from '../components/Header';
-import {logout} from '../redux/auth/actions';
 import LogoutModal from '../components/LogoutModal';
-
 
 const CustomerSupport = () => {
   const dispatch = useDispatch();
   const modalRef = useRef();
 
   const [showCallButtons, setShowCallButtons] = useState(false);
+
+  const userInfo = useSelector(state => state.auth?.customerInfo);
 
   return (
     <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
@@ -58,7 +58,7 @@ const CustomerSupport = () => {
               color: '#000',
               marginTop: 18,
             }}>
-            Maria John
+            {userInfo?.name}
           </Text>
           <Text
             style={{

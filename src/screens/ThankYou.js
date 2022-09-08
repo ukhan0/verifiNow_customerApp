@@ -1,8 +1,7 @@
 import React from 'react';
 import {View, Text, StatusBar} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -10,6 +9,8 @@ import { audioOnBoard } from '../redux/auth/actions';
 
 const ThankYou = (route) => {
   const dispatch = useDispatch();
+
+  const userInfo = useSelector(state => state.auth?.customerInfo);
 
   const audioResponse = route?.route?.params?.response;
 
@@ -37,7 +38,7 @@ const ThankYou = (route) => {
             color: '#000',
             marginTop: 10,
           }}>
-          Maria John
+          {userInfo?.name}
         </Text>
         <Text
           style={{
@@ -46,7 +47,7 @@ const ThankYou = (route) => {
             color: '#000',
             marginTop: 40,
           }}>
-          Your ID has been verified and you can stat using our service.
+          Your ID has been verified and you can start using our service.
         </Text>
         <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 40}}>
           <Button
