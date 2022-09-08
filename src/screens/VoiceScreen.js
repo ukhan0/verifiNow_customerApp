@@ -11,10 +11,12 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Sound from 'react-native-sound';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
+import RNExitApp from 'react-native-exit-app';
 import AudioRecord from 'react-native-audio-record';
 import {useNavigation} from '@react-navigation/native';
+import {check, request, PERMISSIONS} from 'react-native-permissions';
 
 import images from '../constants/images';
 import Header from '../components/Header';
@@ -59,15 +61,11 @@ const VoiceScreen = () => {
         const grants = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         ]);
-
-        console.log('write external stroage', grants);
-
         if (
           grants['android.permission.RECORD_AUDIO'] ===
           PermissionsAndroid.RESULTS.GRANTED
         ) {
           AudioRecord.start();
-          console.log('Permissions granted');
         } else {
           console.log('All required permissions not granted');
           return;
@@ -75,6 +73,15 @@ const VoiceScreen = () => {
       } catch (err) {
         console.warn(err);
         return;
+      }
+    } else {
+      const result = await check(PERMISSIONS.IOS.MICROPHONE);
+      if (result === 'granted') {
+        console.log('result =>', result);
+      } else {
+        request(PERMISSIONS.IOS.MICROPHONE).then(result => {
+          console.log('result =>', result);
+        });
       }
     }
   };
@@ -114,7 +121,8 @@ const VoiceScreen = () => {
   const uploadAudioVoice = async () => {
     try {
       setShowLoading(true);
-
+      console.log('audioFile', audioFile);
+      return true;
       var formData = new FormData();
       formData.append('media_type', 'AUDIO_ONBOARDING');
       formData.append('file', {
@@ -163,7 +171,15 @@ const VoiceScreen = () => {
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
           showsVerticalScrollIndicator={false}>
-          <TouchableOpacity onPress={() => BackHandler.exitApp()}>
+          <TouchableOpacity
+            onPress={() => {
+              if (Platform.OS === 'ios') {
+                RNExitApp.exitApp();
+              } else {
+                BackHandler.exitApp();
+              }
+            }}
+            style={{marginTop: Platform.OS === 'ios' ? 30 : 0}}>
             <Image
               resizeMode="contain"
               source={images.cross}
@@ -194,7 +210,8 @@ const VoiceScreen = () => {
                 textAlign: 'center',
                 marginHorizontal: 40,
               }}>
-              “Hi, my name is {userInfo?.name}.I am Customer of American Express.”
+              “Hi, my name is {userInfo?.name}.I am Customer of American
+              Express.”
             </Text>
             {startRecording ? (
               <TouchableOpacity
@@ -327,7 +344,15 @@ const VoiceScreen = () => {
                   disable={playSuccessfully}
                   loading={showLoading}
                   onClick={() => {
-                    uploadAudioVoice();
+                    if (audioFile) {
+                      uploadAudioVoice();
+                    } else {
+                      Snackbar.show({
+                        text: 'Please Re-record your voice',
+                        duration: Snackbar.LENGTH_SHORT,
+                        backgroundColor: '#575DFB',
+                      });
+                    }
                   }}
                   style={{
                     width: 255,
