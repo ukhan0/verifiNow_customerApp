@@ -1,18 +1,103 @@
+import {inCodeOnBoard} from './actions';
 import {SERVER_URL} from '../../utils/baseUrl';
+import {store} from '../stores/configureStore';
 
-export const fcmTokenApi = async (fcmToken, token) => {
-  let postdata = new FormData();
-  postdata.append('fcm_token', fcmToken);
-  console.log('fcmTokenApi =>', fcmToken);
-  const response = await fetch(SERVER_URL + '/user/savefcmtoken', {
-    headers: {
-      Authorization: 'Bearer ' + token,
-    },
-    method: 'POST',
-    body: postdata,
-  });
-  // console.log(response);
-  const resp = await response.json();
-  console.log({resp});
-  return resp;
+import Snackbar from 'react-native-snackbar';
+
+export const fcmTokenApi = async fcmToken => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+    const response = await fetch(SERVER_URL + '/user/savefcmtoken', {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({fcm_token: fcmToken}),
+    });
+    const resp = await response.json();
+    return resp;
+  } catch (error) {
+    console.log('fcmTokenError =>', error);
+  }
+};
+
+export const storeIncodeInfoApi = async (accessToken, status) => {
+  try {
+    const customerInterviewId = store.getState().auth?.customerInterviewId;
+    const customerToken = store.getState().auth?.customerToken;
+    const faceMatchInfo = store.getState().auth?.faceMatchInfo;
+    const customerUUID = store.getState().auth?.customerUUID;
+    const frontIDInfo = store.getState().auth?.frontIDInfo;
+    const backIDInfo = store.getState().auth?.backIDInfo;
+    const selfieInfo = store.getState().auth?.selfieInfo;
+    
+    if (!faceMatchInfo?.existingUser) {
+      const response = await fetch(SERVER_URL + '/user/saveCustomerProfile', {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          status: status,
+          id_back: backIDInfo,
+          selfie: selfieInfo,
+          id_front: frontIDInfo,
+          type: 'INCODE_ONBORDING',
+          customer_uuid: customerUUID,
+          customer_token: customerToken,
+          customer_interViewId: customerInterviewId,
+        }),
+      });
+      const resp = await response.json();
+      if (resp?.onboarding) {
+        store.dispatch(inCodeOnBoard(resp?.onboarding));
+      } else {
+        Snackbar.show({
+          text: 'ID card verification failed, kindly try again',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
+        });
+      }
+    }
+  } catch (error) {
+    console.log('incode onboarding =>', error);
+    Snackbar.show({
+      text: 'Something went wrong',
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  }
+};
+
+export const selfieVerificationApi = async data => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+
+    const response = await fetch(SERVER_URL + '/user/selfieVerification', {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'SELFIE_VERIFICATION',
+        data: data,
+      }),
+    });
+    const resp = await response.json();
+    Snackbar.show({
+      text: resp?.message,
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  } catch (error) {
+    console.log('incode onboarding =>', error);
+    Snackbar.show({
+      text: 'Something went wrong',
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  }
 };

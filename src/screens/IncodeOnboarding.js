@@ -1,35 +1,47 @@
 import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, Text, StatusBar} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import IncodeSdk from 'react-native-incode-sdk';
-import {useNavigation} from '@react-navigation/native';
-import messaging from '@react-native-firebase/messaging';
 
-import {isUserLoggedIn} from '../redux/auth/selectors';
-import {fcmTokenApi} from '../redux/auth/apis';
+import {
+  setSelfieInfo,
+  setBackIDInfo,
+  setFrontIDInfo,
+  setCustomerUUID,
+  setCustomerToken,
+  setCustomerInterviewId,
+  faceMatchInfo,
+} from '../redux/auth/actions';
+import {storeIncodeInfoApi} from '../redux/auth/apis';
+import {isIncodeAuthenticate, isUserLoggedIn} from '../redux/auth/selectors';
 
 const IncodeOnboarding = () => {
-  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const accessToken = isUserLoggedIn();
+  const incodeAuthenticate = isIncodeAuthenticate(); 
   const userId = useSelector(state => state.auth?.customerInfo?.id.toString());
 
   const [showLoading, setShowLoading] = useState(true);
-  const [customerToken, setCustomerToken] = useState('');
-  const [customerUUID, setCustomerUUID] = useState('');
 
-  // useEffect(() => {
-  //   async () => {
-  //     const fcmToken = await messaging().getToken();
-  //     if (accessToken) {
-  //       fcmTokenApi(fcmToken, accessToken);
-  //     }
-  //   };
-  // }, [accessToken]);
+  const storeIncodeData = (status) => {
+    storeIncodeInfoApi(
+      accessToken,
+      status,
+    );
+  };
 
   useEffect(() => {
-    initializeAndRunOnboarding();
-  }, []);
+     const timeout = setTimeout(() => {
+      if (!incodeAuthenticate) {
+        initializeAndRunOnboarding();
+      }
+    }, 2000)
+
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [incodeAuthenticate]);
 
   const initializeAndRunOnboarding = async () => {
     IncodeSdk.initialize({
@@ -76,10 +88,10 @@ const IncodeOnboarding = () => {
 
   const setupListeners = () => {
     IncodeSdk.onSessionCreated(session => {
+      console.log('session created =>', session.interviewId);
       setShowLoading(false);
-      console.log(
-        'Onboarding session created, interviewId: ' + session.interviewId,
-      );
+      dispatch(setCustomerToken(session.token));
+      dispatch(setCustomerInterviewId(session.interviewId));
     });
 
     const complete = IncodeSdk.onStepCompleted;
@@ -87,16 +99,14 @@ const IncodeOnboarding = () => {
       complete({
         module: 'IdScanFront',
         listener: e => {
+          dispatch(setFrontIDInfo(e.result));
           console.log('ID scan front:', e.result);
-          if (e.result.status !== 'ok') {
-            console.log('yoo man =>');
-            setupListeners();
-          }
         },
       }),
       complete({
         module: 'IdScanBack',
         listener: e => {
+          dispatch(setBackIDInfo(e.result));
           console.log('ID scan back: ', e.result);
         },
       }),
@@ -109,22 +119,29 @@ const IncodeOnboarding = () => {
       complete({
         module: 'SelfieScan',
         listener: e => {
-          console.log('Selfie scan complete', e.result);
+          dispatch(setSelfieInfo(e.result));
         },
       }),
 
       complete({
         module: 'FaceMatch',
         listener: e => {
+          dispatch(faceMatchInfo(e.result));
           console.log('Face match complete', e.result);
         },
       }),
       complete({
         module: 'Approve',
-        listener: e => {
-          console.log('Approve token: ', e.result);
-          setCustomerToken(e.result.customerToken);
-          setCustomerUUID(e.result.id);
+        listener: async e => {
+          console.log('Approve Info=>', e.result);
+          if (e.result.id) {
+            dispatch(setCustomerUUID(e.result.id));
+            storeIncodeData('success');
+            IncodeSdk.finishOnboardingFlow();
+          } else {
+            setShowLoading(true);
+            startOnboarding();
+          }
         },
       }),
     ];

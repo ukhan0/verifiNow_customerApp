@@ -9,12 +9,20 @@ import {
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import {useDispatch, useSelector} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
 
+import {
+  audioOnBoard,
+  inCodeOnBoard,
+  login,
+  loginfailed,
+  loginSuccess,
+} from '../redux/auth/actions';
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import {SERVER_URL} from '../utils/baseUrl';
-import {audioOnBoard, login, loginfailed, loginSuccess} from '../redux/auth/actions';
+import {fcmTokenApi} from '../redux/auth/apis';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -30,6 +38,11 @@ const Login = () => {
     return re.test(String(email).toLowerCase());
   }
 
+  const storeFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    fcmTokenApi(fcmToken);
+  };
+
   const loginApi = async () => {
     try {
       dispatch(login());
@@ -44,9 +57,13 @@ const Login = () => {
       const resp = await response.json();
       if (resp?.data) {
         dispatch(loginSuccess(resp?.data));
-        if (resp?.data?.on_boarding) {
-          dispatch(audioOnBoard(resp?.data?.on_boarding))
+        if (resp?.data?.audio_onboarding) {
+          dispatch(audioOnBoard(resp?.data?.audio_onboarding));
         }
+        if (resp?.data?.incode_onboarding) {
+          dispatch(inCodeOnBoard(resp?.data?.incode_onboarding));
+        }
+        storeFcmToken();
       } else {
         Snackbar.show({
           text: resp?.message,
@@ -124,7 +141,7 @@ const Login = () => {
                   marginRight: email ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
-                  color: '#000'
+                  color: '#000',
                 }}
               />
             </View>
@@ -171,7 +188,7 @@ const Login = () => {
                   marginRight: password ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
-                  color: '#000'
+                  color: '#000',
                 }}
               />
             </View>

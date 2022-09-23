@@ -65,6 +65,7 @@ const VoiceScreen = () => {
           grants['android.permission.RECORD_AUDIO'] ===
           PermissionsAndroid.RESULTS.GRANTED
         ) {
+          AudioRecord.init(AUDIO_OPTIONS);
           AudioRecord.start();
         } else {
           console.log('All required permissions not granted');
