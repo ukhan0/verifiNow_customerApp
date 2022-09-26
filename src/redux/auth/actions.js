@@ -1,4 +1,18 @@
-import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS, LOG_OUT, AUDIO_ON_BOARDING} from './types';
+import {
+  LOGIN,
+  LOG_OUT,
+  FACE_MATCH,
+  SELFIE_INFO,
+  BACK_ID_INFO,
+  LOGIN_FAILED,
+  FRONT_ID_INFO,
+  CUSTOMER_UUID,
+  LOGIN_SUCCESS,
+  CUSTOMER_TOKEN,
+  AUDIO_ON_BOARDING,
+  INCODE_ON_BOARDING,
+  CUSTOMER_INTERVIEW_ID,
+} from './types';
 
 export const login = (email, password) => {
   return {
@@ -24,9 +38,65 @@ export const logout = () => {
   };
 };
 
-export const audioOnBoard = (info) => {
+export const audioOnBoard = info => {
   return {
     type: AUDIO_ON_BOARDING,
-    payload: info
+    payload: info,
+  };
+};
+
+export const inCodeOnBoard = info => {
+  return {
+    type: INCODE_ON_BOARDING,
+    payload: info,
+  };
+};
+
+export const setCustomerUUID = id => {
+  return {
+    type: CUSTOMER_UUID,
+    payload: id,
+  };
+};
+
+export const setCustomerToken = token => {
+  return {
+    type: CUSTOMER_TOKEN,
+    payload: token,
+  };
+};
+
+export const setCustomerInterviewId = id => {
+  return {
+    type: CUSTOMER_INTERVIEW_ID,
+    payload: id,
+  };
+};
+
+export const setSelfieInfo = data => {
+  return {
+    type: SELFIE_INFO,
+    payload: data,
+  };
+};
+
+export const setFrontIDInfo = data => {
+  return {
+    type: FRONT_ID_INFO,
+    payload: data,
+  };
+};
+
+export const setBackIDInfo = data => {
+  return {
+    type: BACK_ID_INFO,
+    payload: data,
+  };
+};
+
+export const faceMatchInfo = data => {
+  return {
+    type: FACE_MATCH,
+    payload: data,
   };
 };

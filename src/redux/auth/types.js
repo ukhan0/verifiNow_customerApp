@@ -1,5 +1,14 @@
 export const LOGIN = 'LOGIN';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILED = 'LOGIN_FAILED';
 export const LOG_OUT = 'LOG_OUT';
+export const FACE_MATCH = 'FACE_MATCH';
+export const SELFIE_INFO = 'SELFIE_INFO';
+export const BACK_ID_INFO = 'BACK_ID_INFO';
+export const LOGIN_FAILED = 'LOGIN_FAILED';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const FRONT_ID_INFO = 'FRONT_ID_INFO';
+export const CUSTOMER_UUID = 'CUSTOMER_UUID';
+export const CUSTOMER_TOKEN = 'CUSTOMER_TOKEN';
 export const AUDIO_ON_BOARDING = 'AUDIO_ON_BOARDING';
+export const INCODE_ON_BOARDING = 'INCODE_ON_BOARDING';
+export const CUSTOMER_INTERVIEW_ID = 'CUSTOMER_INTERVIEW_ID';
+

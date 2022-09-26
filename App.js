@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { LogBox } from 'react-native';
+import React, {useEffect} from 'react';
+import {LogBox} from 'react-native';
+import IncodeSdk from 'react-native-incode-sdk';
 import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
 import PushNotification from 'react-native-push-notification';
@@ -10,37 +11,45 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
 import {store, persistor} from './src/redux/stores/configureStore';
-import {isAudioAuthenticate, isUserLoggedIn} from './src/redux/auth/selectors';
+import {
+  isAudioAuthenticate,
+  isIncodeAuthenticate,
+  isUserLoggedIn,
+} from './src/redux/auth/selectors';
 
 //Screens
 import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
 import VoiceScreen from './src/screens/VoiceScreen';
-// import WebViewScreen from './src/screens/WebViewScreen';
-// import UploadDocument from './src/screens/UploadDocument';
 import CustomerSupport from './src/screens/CustomerSupport';
+import IncodeOnboarding from './src/screens/IncodeOnboarding';
+import {selfieVerificationApi} from './src/redux/auth/apis';
+import Snackbar from 'react-native-snackbar';
 
 const Stack = createNativeStackNavigator();
 
 const AppContainer = () => {
   const accessToken = isUserLoggedIn();
   const audioAuthenticate = isAudioAuthenticate();
+  const incodeAuthenticate = isIncodeAuthenticate();
 
   if (accessToken) {
-    if (!audioAuthenticate) {
+    if (!incodeAuthenticate) {
+      return (
+        <>
+          <Stack.Navigator initialRouteName="IncodeOnboarding">
+            <Stack.Screen
+              name="IncodeOnboarding"
+              component={IncodeOnboarding}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+          </Stack.Navigator>
+        </>
+      );
+    } else if (incodeAuthenticate && !audioAuthenticate) {
       return (
         <>
           <Stack.Navigator initialRouteName="VoiceScreen">
-            {/* <Stack.Screen
-              name="UploadDocument"
-              component={UploadDocument}
-              options={{animationEnabled: false, headerShown: false}}
-            /> */}
-            {/* <Stack.Screen
-              name="WebViewScreen"
-              component={WebViewScreen}
-              options={{animationEnabled: false, headerShown: false}}
-            /> */}
             <Stack.Screen
               name="VoiceScreen"
               component={VoiceScreen}
@@ -82,56 +91,69 @@ const AppContainer = () => {
   }
 };
 
-function App() {
+const App = () => {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
 
-  const requestUserPermission = async() => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
+  useEffect(() => {
+    const customerVerification = async uuid => {
+      console.log('uuid =>', uuid);
+      await IncodeSdk.initialize({
+        testMode: false,
+        apiConfig: {
+          url: 'https://demo-api.incodesmile.com',
+          key: 'c244aed4cccdcfa6c3d33420d47259cb0363b5b8',
+        },
+      });
 
-  const checkFirstNotification = async() => {
-    console.log('notification');
-    messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-        console.log('notification after =>', remoteMessage);
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification,
-          );
+      IncodeSdk.startFaceLogin({
+        showTutorials: true,
+        faceMaskCheck: false, // Specify true if you would like to prevent login for users that wear face mask
+        customerUUID: uuid,
+      })
+        .then(faceLoginResult => {
+          if (faceLoginResult) {
+            selfieVerificationApi(faceLoginResult);
+          }
+        })
+        .catch(e => {
+          console.log('catch error =>', e, uuid);
+          Snackbar.show({
+            text: "Error while calculating face recognition/liveness confidence",
+            duration: Snackbar.LENGTH_SHORT,
+            backgroundColor: '#575DFB',
+          });
+        });
+    };
+
+    PushNotification.configure({
+      onRegister: function (token) {
+        console.log('TOKEN:', token);
+        PushNotification.createChannel(
+          {
+            channelId: 'fcm_fallback_notification_channel',
+            channelName: 'fcm_fallback_notification_channel',
+          },
+          created => console.log(`createChannel returned '${created}'`),
+        );
+      },
+
+      onNotification: function (notification) {
+        if (notification.userInteraction && notification.data?.uuid) {
+          customerVerification(notification.data?.uuid);
         }
-      });
-  }
+      },
 
-  useEffect(() => {
-    requestUserPermission();
-    checkFirstNotification();
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('remote =>', remoteMessage);
-      PushNotification.localNotification({
-        channelId: 'verifinow',
-        title: remoteMessage.notification.title, // (optional)
-        message: remoteMessage.notification.body
-      });
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+
+      popInitialNotification: true,
+
+      requestPermissions: true,
     });
-    return unsubscribe;
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      console.log('FCM token =>', await messaging().getToken());
-    })();
-  },[])
-
-
 
   return (
     <Provider store={store}>
@@ -142,6 +164,6 @@ function App() {
       </PersistGate>
     </Provider>
   );
-}
+};
 
 export default App;
