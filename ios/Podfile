@@ -4,6 +4,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 use_frameworks!
+pod 'Firebase/Messaging'
 
 production = ENV["PRODUCTION"] == "1"
 
@@ -27,6 +28,9 @@ target 'VerifiNow' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+  
   target 'VerifiNowTests' do
     inherit! :complete
     # Pods for testing

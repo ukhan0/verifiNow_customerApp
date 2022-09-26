@@ -84,29 +84,42 @@ const AppContainer = () => {
 
 function App() {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
+
+  const requestUserPermission = async() => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
-  const notifyChannel = () => {
-    PushNotification.createChannel(
-      {
-        channelId: "verifinow", 
-        channelName: "General", 
-        channelDescription: "General Channel", 
-        playSound: true, 
-        soundName: "default",
-        vibrate: true, 
-      },
-      (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-    );
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  const checkFirstNotification = async() => {
+    console.log('notification');
+    messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+        console.log('notification after =>', remoteMessage);
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.notification,
+          );
+        }
+      });
   }
 
   useEffect(() => {
-    notifyChannel();
+    requestUserPermission();
+    checkFirstNotification();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('remote =>', remoteMessage);
       PushNotification.localNotification({
         channelId: 'verifinow',
         title: remoteMessage.notification.title, // (optional)
-        message: '', // (required)
-        data: remoteMessage.notification.title,
+        message: remoteMessage.notification.body
       });
     });
     return unsubscribe;
