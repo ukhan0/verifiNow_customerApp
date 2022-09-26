@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, Text, StatusBar} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import IncodeSdk from 'react-native-incode-sdk';
+import Snackbar from 'react-native-snackbar';
 
 import {
   setSelfieInfo,
@@ -128,6 +129,16 @@ const IncodeOnboarding = () => {
         listener: e => {
           dispatch(faceMatchInfo(e.result));
           console.log('Face match complete', e.result);
+          if (e.result.existingUser) {
+            Snackbar.show({
+              text: "User Already Exist",
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#575DFB',
+            });
+            IncodeSdk.finishOnboardingFlow();
+            setShowLoading(true);
+            startOnboarding();
+          }
         },
       }),
       complete({

@@ -24,6 +24,7 @@ import VoiceScreen from './src/screens/VoiceScreen';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
+import Snackbar from 'react-native-snackbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -95,6 +96,7 @@ const App = () => {
 
   useEffect(() => {
     const customerVerification = async uuid => {
+      console.log('uuid =>', uuid);
       await IncodeSdk.initialize({
         testMode: false,
         apiConfig: {
@@ -114,8 +116,12 @@ const App = () => {
           }
         })
         .catch(e => {
-          console.log('catch error =>', e);
-          console.error(e.code + ' - ' + e.message);
+          console.log('catch error =>', e, uuid);
+          Snackbar.show({
+            text: "Error while calculating face recognition/liveness confidence",
+            duration: Snackbar.LENGTH_SHORT,
+            backgroundColor: '#575DFB',
+          });
         });
     };
 
