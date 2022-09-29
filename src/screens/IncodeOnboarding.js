@@ -20,28 +20,25 @@ const IncodeOnboarding = () => {
   const dispatch = useDispatch();
 
   const accessToken = isUserLoggedIn();
-  const incodeAuthenticate = isIncodeAuthenticate(); 
+  const incodeAuthenticate = isIncodeAuthenticate();
   const userId = useSelector(state => state.auth?.customerInfo?.id.toString());
 
   const [showLoading, setShowLoading] = useState(true);
 
-  const storeIncodeData = (status) => {
-    storeIncodeInfoApi(
-      accessToken,
-      status,
-    );
+  const storeIncodeData = status => {
+    storeIncodeInfoApi(accessToken, status);
   };
 
   useEffect(() => {
-     const timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (!incodeAuthenticate) {
         initializeAndRunOnboarding();
       }
-    }, 2000)
+    }, 2000);
 
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, [incodeAuthenticate]);
 
   const initializeAndRunOnboarding = async () => {
@@ -59,6 +56,23 @@ const IncodeOnboarding = () => {
   };
 
   const startOnboarding = () => {
+    const jsonTheme = JSON.stringify({
+      buttons: {
+        primary: {
+          states: {
+            normal: {
+              backgroundColor: '#E60000',
+            },
+            highlighted: {
+              backgroundColor: '#E60000',
+            },
+          },
+        },
+      },
+    });
+
+    IncodeSdk.setTheme({jsonTheme: jsonTheme});
+
     IncodeSdk.startOnboarding({
       flowConfig: [
         {module: 'IdScan'},
@@ -131,7 +145,7 @@ const IncodeOnboarding = () => {
           console.log('Face match complete', e.result);
           if (e.result.existingUser) {
             Snackbar.show({
-              text: "User Already Exist",
+              text: 'User Already Exist',
               duration: Snackbar.LENGTH_SHORT,
               backgroundColor: '#575DFB',
             });

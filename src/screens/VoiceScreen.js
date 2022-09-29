@@ -79,6 +79,8 @@ const VoiceScreen = () => {
       const result = await check(PERMISSIONS.IOS.MICROPHONE);
       if (result === 'granted') {
         console.log('result =>', result);
+        AudioRecord.init(AUDIO_OPTIONS);
+        AudioRecord.start();
       } else {
         request(PERMISSIONS.IOS.MICROPHONE).then(result => {
           console.log('result =>', result);
@@ -89,6 +91,7 @@ const VoiceScreen = () => {
 
   const stopRecordingFunc = async () => {
     const audioPath = await AudioRecord.stop();
+    console.log('audioPath =>', audioPath);
     setAudioFile(audioPath);
   };
 
@@ -97,7 +100,7 @@ const VoiceScreen = () => {
     audioSound = new Sound(audioFile, Sound.MAIN_BUNDLE, error => {
       if (error) {
         setPlaySuccessfully(false);
-        console.log('failed to load the sound', error);
+        console.log('failed to load the sound =>', error);
         return;
       }
 

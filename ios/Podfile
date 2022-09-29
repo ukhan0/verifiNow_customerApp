@@ -30,6 +30,7 @@ target 'VerifiNow' do
 
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
   pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+  pod 'react-native-incode-sdk', :path => '../node_modules/react-native-incode-sdk/ios'
   
   target 'VerifiNowTests' do
     inherit! :complete

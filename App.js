@@ -1,10 +1,12 @@
 import React, {useEffect} from 'react';
-import {LogBox} from 'react-native';
+import {LogBox, Platform, Alert} from 'react-native';
+import Snackbar from 'react-native-snackbar';
 import IncodeSdk from 'react-native-incode-sdk';
 import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
 import PushNotification from 'react-native-push-notification';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 //Redux
 import {Provider} from 'react-redux';
@@ -24,7 +26,6 @@ import VoiceScreen from './src/screens/VoiceScreen';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
-import Snackbar from 'react-native-snackbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -94,36 +95,62 @@ const AppContainer = () => {
 const App = () => {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
 
-  useEffect(() => {
-    const customerVerification = async uuid => {
-      console.log('uuid =>', uuid);
-      await IncodeSdk.initialize({
-        testMode: false,
-        apiConfig: {
-          url: 'https://demo-api.incodesmile.com',
-          key: 'c244aed4cccdcfa6c3d33420d47259cb0363b5b8',
+  const createThreeButtonAlert = notification => {
+    console.log('createThreeButtonAlert', notification);
+    Alert.alert(
+      notification?.notification?.title,
+      notification?.notification?.body,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
         },
-      });
+        {
+          text: 'OK',
+          onPress: () =>
+            customerVerification(notification?.notification?.data?.uuid),
+        },
+      ],
+    );
+  };
 
-      IncodeSdk.startFaceLogin({
-        showTutorials: true,
-        faceMaskCheck: false, // Specify true if you would like to prevent login for users that wear face mask
-        customerUUID: uuid,
+  const customerVerification = async uuid => {
+    console.log('uuid =>', uuid);
+    await IncodeSdk.initialize({
+      testMode: false,
+      apiConfig: {
+        url: 'https://demo-api.incodesmile.com',
+        key: 'c244aed4cccdcfa6c3d33420d47259cb0363b5b8',
+      },
+    });
+
+    IncodeSdk.startFaceLogin({
+      showTutorials: true,
+      faceMaskCheck: false, // Specify true if you would like to prevent login for users that wear face mask
+      customerUUID: uuid,
+    })
+      .then(faceLoginResult => {
+        if (faceLoginResult) {
+          selfieVerificationApi(faceLoginResult);
+        }
       })
-        .then(faceLoginResult => {
-          if (faceLoginResult) {
-            selfieVerificationApi(faceLoginResult);
-          }
-        })
-        .catch(e => {
-          console.log('catch error =>', e, uuid);
-          Snackbar.show({
-            text: "Error while calculating face recognition/liveness confidence",
-            duration: Snackbar.LENGTH_SHORT,
-            backgroundColor: '#575DFB',
-          });
+      .catch(e => {
+        console.log('catch error =>', e, uuid);
+        Snackbar.show({
+          text: 'Error while calculating face recognition/liveness confidence',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
         });
-    };
+      });
+  };
+
+  useEffect(() => {
+    messaging().onMessage(message => {
+      if (Platform.OS === 'ios') {
+        createThreeButtonAlert(message);
+      }
+    });
 
     PushNotification.configure({
       onRegister: function (token) {
@@ -141,6 +168,7 @@ const App = () => {
         if (notification.userInteraction && notification.data?.uuid) {
           customerVerification(notification.data?.uuid);
         }
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
 
       permissions: {

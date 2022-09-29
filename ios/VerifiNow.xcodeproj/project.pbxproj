@@ -14,7 +14,7 @@
 		3DFEBD3DE253BC8D338D1F5F /* Pods_VerifiNow_VerifiNowTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC15F3E7A93CF4B60C9893AC /* Pods_VerifiNow_VerifiNowTests.framework */; };
 		5046C074E8914C45AC3E7234 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D14C7192CC14EF4B178B7FC /* Roboto-Medium.ttf */; };
 		5C4AEA5F6B5450FD0365CAE0 /* Pods_VerifiNow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D92F0C6622DA35C93AAC8A2 /* Pods_VerifiNow.framework */; };
-		60D84F1128CB59E1004A696F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 60D84F1028CB59E1004A696F /* GoogleService-Info.plist */; };
+		60C87C2028E32D8F003B659F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 60C87C1F28E32D8E003B659F /* GoogleService-Info.plist */; };
 		62FD6D3CB5F84145BBBA60D3 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 497357BBEF804234A2703D93 /* Roboto-Thin.ttf */; };
 		69532FC1F3504EBCBD28CF56 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E26E7278F382419CA6C02DFF /* Roboto-Black.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -51,7 +51,7 @@
 		5B7EB9410499542E8C5724F5 /* Pods-VerifiNow-VerifiNowTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VerifiNow-VerifiNowTests.debug.xcconfig"; path = "Target Support Files/Pods-VerifiNow-VerifiNowTests/Pods-VerifiNow-VerifiNowTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5D14C7192CC14EF4B178B7FC /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../src/assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		6048487228D0803B00D76C72 /* VerifiNow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = VerifiNow.entitlements; path = VerifiNow/VerifiNow.entitlements; sourceTree = "<group>"; };
-		60D84F1028CB59E1004A696F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		60C87C1F28E32D8E003B659F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = VerifiNow/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-VerifiNow-VerifiNowTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VerifiNow-VerifiNowTests.release.xcconfig"; path = "Target Support Files/Pods-VerifiNow-VerifiNowTests/Pods-VerifiNow-VerifiNowTests.release.xcconfig"; sourceTree = "<group>"; };
 		DC15F3E7A93CF4B60C9893AC /* Pods_VerifiNow_VerifiNowTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VerifiNow_VerifiNowTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,13 +102,13 @@
 			isa = PBXGroup;
 			children = (
 				6048487228D0803B00D76C72 /* VerifiNow.entitlements */,
-				60D84F1028CB59E1004A696F /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				60C87C1F28E32D8E003B659F /* GoogleService-Info.plist */,
 			);
 			name = VerifiNow;
 			sourceTree = "<group>";
@@ -237,7 +237,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1400;
 					};
 				};
 			};
@@ -274,7 +274,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				60D84F1128CB59E1004A696F /* GoogleService-Info.plist in Resources */,
+				60C87C2028E32D8F003B659F /* GoogleService-Info.plist in Resources */,
 				69532FC1F3504EBCBD28CF56 /* Roboto-Black.ttf in Resources */,
 				A438D72EEB60462B8891BF42 /* Roboto-Bold.ttf in Resources */,
 				FC0AB706D5A3461889D7531F /* Roboto-Light.ttf in Resources */,
@@ -520,6 +520,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.verifinow;
 				PRODUCT_NAME = VerifiNow;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "VerifiNow-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -550,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.verifinow;
 				PRODUCT_NAME = VerifiNow;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "VerifiNow-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

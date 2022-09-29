@@ -40,6 +40,7 @@ const Login = () => {
 
   const storeFcmToken = async () => {
     const fcmToken = await messaging().getToken();
+    console.log('fcmToken =>', fcmToken);
     fcmTokenApi(fcmToken);
   };
 
