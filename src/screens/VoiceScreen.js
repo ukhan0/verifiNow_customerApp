@@ -209,8 +209,7 @@ const VoiceScreen = () => {
                 textAlign: 'center',
                 marginHorizontal: 40,
               }}>
-              “Hi, my name is {userInfo?.name}.I am Customer of American
-              Express.”
+                My account is secure because my voice is my password
             </Text>
             {startRecording ? (
               <TouchableOpacity
