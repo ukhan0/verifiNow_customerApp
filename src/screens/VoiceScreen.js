@@ -78,7 +78,8 @@ const VoiceScreen = () => {
     } else {
       const result = await check(PERMISSIONS.IOS.MICROPHONE);
       if (result === 'granted') {
-        console.log('result =>', result);
+        AudioRecord.init(AUDIO_OPTIONS);
+        AudioRecord.start();
       } else {
         request(PERMISSIONS.IOS.MICROPHONE).then(result => {
           console.log('result =>', result);
