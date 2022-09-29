@@ -90,20 +90,23 @@ const VoiceScreen = () => {
 
   const stopRecordingFunc = async () => {
     const audioPath = await AudioRecord.stop();
+    console.log('audioPath', audioPath);
     setAudioFile(audioPath);
   };
 
   const playAudio = () => {
     setPlaySuccessfully(true);
-    audioSound = new Sound(audioFile, Sound.MAIN_BUNDLE, error => {
+    audioSound = new Sound(audioFile, '', error => {
       if (error) {
         setPlaySuccessfully(false);
         console.log('failed to load the sound', error);
         return;
       }
 
+      Sound.setCategory('Playback');
       // Play the sound with an onEnd callback
       audioSound.play(success => {
+        console.log('success =>', success);
         if (success) {
           setPlaySuccessfully(false);
           console.log('successfully finished playing');
