@@ -8,6 +8,7 @@ import {
   Linking,
   AppState,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment/moment';
 import {useSelector} from 'react-redux';
@@ -20,7 +21,8 @@ import LogoutModal from '../components/LogoutModal';
 import {getCustomerHistory} from '../redux/auth/apis';
 
 const CustomerSupport = () => {
-  const [customerHistory, setCustomerHistory] = useState(null);
+  const [showLoading, setShowLoading] = useState(false);
+  const [customerHistory, setCustomerHistory] = useState([]);
   const [showCallButtons, setShowCallButtons] = useState(false);
 
   const modalRef = useRef();
@@ -30,8 +32,10 @@ const CustomerSupport = () => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       (async () => {
+        setShowLoading(true);
         const data = await getCustomerHistory(userInfo?.id);
         setCustomerHistory(data ? data : []);
+        setShowLoading(false);
       })();
     });
     return unsubscribe;
@@ -49,6 +53,7 @@ const CustomerSupport = () => {
             position: 'absolute',
             top: 50,
             right: 20,
+            opacity: showCallButtons ? 0.5 : 1,
           }}>
           <Image source={images.logout} style={{width: 23, height: 23}} />
         </TouchableOpacity>
@@ -105,10 +110,7 @@ const CustomerSupport = () => {
         {showCallButtons && (
           <View
             style={{
-              flexGrow: 1,
-              justifyContent: 'flex-end',
               marginHorizontal: 20,
-              marginBottom: 30,
             }}>
             <Button
               icon={true}
@@ -137,22 +139,24 @@ const CustomerSupport = () => {
             />
           </View>
         )}
-        
-        {customerHistory?.length && (
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'Roboto-Medium',
-              color: '#000',
-              marginLeft: 20,
-              marginTop: 50,
-              marginBottom: 20
-            }}>
-            Call History
-          </Text>
-        )}
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'Roboto-Medium',
+            color: '#000',
+            marginLeft: 20,
+            marginTop: 50,
+            marginBottom: 20,
+            opacity: showCallButtons ? 0.5 : 1,
+          }}>
+          Call History
+        </Text>
 
-        {customerHistory?.length &&
+        {showLoading ? (
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator size={30} color="#e60000" />
+          </View>
+        ) : !showLoading && customerHistory?.length ? (
           customerHistory.map((info, index) => {
             const calenderDate = moment(info?.created_at).format('MM/DD/YYYY');
             const time = moment(info?.created_at).format('h:mm a');
@@ -179,7 +183,7 @@ const CustomerSupport = () => {
                       fontSize: 16,
                       fontFamily: 'Roboto-Light',
                       color: '#000',
-                      marginTop: 5
+                      marginTop: 5,
                     }}>
                     Date : {calenderDate}
                   </Text>
@@ -188,9 +192,9 @@ const CustomerSupport = () => {
                       fontSize: 16,
                       fontFamily: 'Roboto-Light',
                       color: '#000',
-                      marginTop: 5
+                      marginTop: 5,
                     }}>
-                    {info?.type} {info?.status == '0' ? 'FAILED' : 'PASSED' }
+                    {info?.type} {info?.status == '0' ? 'FAILED' : 'PASSED'}
                   </Text>
                 </View>
                 <View
@@ -202,8 +206,21 @@ const CustomerSupport = () => {
                 />
               </View>
             );
-          })}
-        
+          })
+        ) : (
+          <View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'Roboto-Light',
+                color: '#000',
+                marginTop: 5,
+                alignSelf: 'center',
+              }}>
+              No History Found
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
