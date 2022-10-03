@@ -155,7 +155,7 @@ const CustomerSupport = () => {
         {customerHistory?.length &&
           customerHistory.map((info, index) => {
             const calenderDate = moment(info?.created_at).format('MM/DD/YYYY');
-            const time = moment(info?.created_at).format('ha');
+            const time = moment(info?.created_at).format('h:mm a');
 
             return (
               <View
