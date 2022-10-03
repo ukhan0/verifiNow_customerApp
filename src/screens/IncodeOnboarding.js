@@ -14,6 +14,7 @@ import {
   faceMatchInfo,
 } from '../redux/auth/actions';
 import {storeIncodeInfoApi} from '../redux/auth/apis';
+import { apiKey, apiUrl } from '../utils/incodeCredentials';
 import {isIncodeAuthenticate, isUserLoggedIn} from '../redux/auth/selectors';
 
 const IncodeOnboarding = () => {
@@ -45,8 +46,8 @@ const IncodeOnboarding = () => {
     IncodeSdk.initialize({
       testMode: false,
       apiConfig: {
-        key: 'c244aed4cccdcfa6c3d33420d47259cb0363b5b8',
-        url: 'https://demo-api.incodesmile.com',
+        key: apiKey,
+        url: apiUrl,
       },
     })
       .then(_ => {

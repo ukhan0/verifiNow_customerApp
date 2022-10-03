@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,22 +6,36 @@ import {
   Image,
   ScrollView,
   Linking,
+  AppState,
   TouchableOpacity,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import moment from 'moment/moment';
+import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 import images from '../constants/images';
 import Button from '../components/Button';
 import Header from '../components/Header';
 import LogoutModal from '../components/LogoutModal';
+import {getCustomerHistory} from '../redux/auth/apis';
 
 const CustomerSupport = () => {
-  const dispatch = useDispatch();
-  const modalRef = useRef();
-
+  const [customerHistory, setCustomerHistory] = useState(null);
   const [showCallButtons, setShowCallButtons] = useState(false);
 
+  const modalRef = useRef();
+  const navigation = useNavigation();
   const userInfo = useSelector(state => state.auth?.customerInfo);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      (async () => {
+        const data = await getCustomerHistory(userInfo?.id);
+        setCustomerHistory(data ? data : []);
+      })();
+    });
+    return unsubscribe;
+  }, [userInfo, navigation]);
 
   return (
     <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
@@ -88,56 +102,6 @@ const CustomerSupport = () => {
             </>
           )}
         </View>
-        {/* <View
-          style={{
-            flexGrow: 1,
-            marginHorizontal: 20,
-            marginVertical: 50,
-            opacity: showCallButtons ? 0.5 : 1,
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'Roboto-Medium',
-              color: '#000',
-            }}>
-            Call History
-          </Text>
-
-          <View style={{marginTop: 40}}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'Roboto-Light',
-                color: '#000',
-              }}>
-              Time : 3pm
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'Roboto-Light',
-                color: '#000',
-              }}>
-              Date : 02/02/2022
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'Roboto-Light',
-                color: '#000',
-              }}>
-              Audio Verification
-            </Text>
-          </View>
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: '#757575',
-              marginTop: 25,
-            }}
-          />
-        </View> */}
         {showCallButtons && (
           <View
             style={{
@@ -148,11 +112,11 @@ const CustomerSupport = () => {
             }}>
             <Button
               icon={true}
-              title="Call +92034567890"
+              title="Call +1 (424) 577-4760"
               tintColor="#969696"
               textStyle={{color: '#575DFB'}}
               onClick={() => {
-                Linking.openURL(`tel:+923452903810`);
+                Linking.openURL(`tel:+14245774760`);
               }}
               style={{
                 borderWidth: 1,
@@ -173,6 +137,73 @@ const CustomerSupport = () => {
             />
           </View>
         )}
+        
+        {customerHistory?.length && (
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'Roboto-Medium',
+              color: '#000',
+              marginLeft: 20,
+              marginTop: 50,
+              marginBottom: 20
+            }}>
+            Call History
+          </Text>
+        )}
+
+        {customerHistory?.length &&
+          customerHistory.map((info, index) => {
+            const calenderDate = moment(info?.created_at).format('MM/DD/YYYY');
+            const time = moment(info?.created_at).format('ha');
+
+            return (
+              <View
+                key={index}
+                style={{
+                  flexGrow: 1,
+                  marginHorizontal: 20,
+                  opacity: showCallButtons ? 0.5 : 1,
+                }}>
+                <View style={{marginTop: 20}}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Roboto-Light',
+                      color: '#000',
+                    }}>
+                    Time : {time}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Roboto-Light',
+                      color: '#000',
+                      marginTop: 5
+                    }}>
+                    Date : {calenderDate}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Roboto-Light',
+                      color: '#000',
+                      marginTop: 5
+                    }}>
+                    {info?.type} {info?.status == '0' ? 'FAILED' : 'PASSED' }
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#757575',
+                    marginTop: 25,
+                  }}
+                />
+              </View>
+            );
+          })}
+        
       </ScrollView>
     </View>
   );

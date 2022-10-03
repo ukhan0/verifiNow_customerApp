@@ -31,7 +31,7 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
     const frontIDInfo = store.getState().auth?.frontIDInfo;
     const backIDInfo = store.getState().auth?.backIDInfo;
     const selfieInfo = store.getState().auth?.selfieInfo;
-    
+
     if (!faceMatchInfo?.existingUser) {
       const response = await fetch(SERVER_URL + '/user/saveCustomerProfile', {
         headers: {
@@ -94,6 +94,33 @@ export const selfieVerificationApi = async data => {
     });
   } catch (error) {
     console.log('incode onboarding =>', error);
+    Snackbar.show({
+      text: 'Something went wrong',
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  }
+};
+
+export const getCustomerHistory = async (id) => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+
+    const response = await fetch(
+      SERVER_URL + `/user/customer_verification_logs/${id}?type=all`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      },
+    );
+    const resp = await response.json();
+    if (resp?.status) {
+      return resp?.data;
+    }
+  } catch (error) {
     Snackbar.show({
       text: 'Something went wrong',
       duration: Snackbar.LENGTH_SHORT,

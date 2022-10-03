@@ -6,7 +6,6 @@ import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
 import PushNotification from 'react-native-push-notification';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 //Redux
 import {Provider} from 'react-redux';
@@ -26,6 +25,7 @@ import VoiceScreen from './src/screens/VoiceScreen';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
+import { apiKey, apiUrl } from './src/utils/incodeCredentials';
 
 const Stack = createNativeStackNavigator();
 
@@ -95,8 +95,7 @@ const AppContainer = () => {
 const App = () => {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
 
-  const createThreeButtonAlert = notification => {
-    console.log('createThreeButtonAlert', notification);
+  const showNotification = notification => {
     Alert.alert(
       notification?.notification?.title,
       notification?.notification?.body,
@@ -120,8 +119,8 @@ const App = () => {
     await IncodeSdk.initialize({
       testMode: false,
       apiConfig: {
-        url: 'https://demo-api.incodesmile.com',
-        key: 'c244aed4cccdcfa6c3d33420d47259cb0363b5b8',
+        url: apiUrl,
+        key: apiKey,
       },
     });
 
@@ -148,7 +147,7 @@ const App = () => {
   useEffect(() => {
     messaging().onMessage(message => {
       if (Platform.OS === 'ios') {
-        createThreeButtonAlert(message);
+        showNotification(message);
       }
     });
 
@@ -168,7 +167,6 @@ const App = () => {
         if (notification.userInteraction && notification.data?.uuid) {
           customerVerification(notification.data?.uuid);
         }
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
 
       permissions: {
