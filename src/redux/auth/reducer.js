@@ -12,6 +12,7 @@ import {
   AUDIO_ON_BOARDING,
   INCODE_ON_BOARDING,
   CUSTOMER_INTERVIEW_ID,
+  GET_CUSTOMER_HISTORY,
 } from './types';
 
 const INITIAL_STATE = {
@@ -26,6 +27,7 @@ const INITIAL_STATE = {
   audio_onboarding: null,
   incode_onboarding: null,
   customerInterviewId: null,
+  verificationHistory: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -64,6 +66,9 @@ export default (state = INITIAL_STATE, action) => {
 
     case FACE_MATCH:
       return {...state, faceMatchInfo: payload};
+
+    case GET_CUSTOMER_HISTORY:
+      return {...state, verificationHistory: payload};
 
     case LOG_OUT:
       return INITIAL_STATE;

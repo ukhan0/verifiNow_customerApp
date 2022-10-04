@@ -12,6 +12,7 @@ import {
   AUDIO_ON_BOARDING,
   INCODE_ON_BOARDING,
   CUSTOMER_INTERVIEW_ID,
+  GET_CUSTOMER_HISTORY,
 } from './types';
 
 export const login = (email, password) => {
@@ -97,6 +98,13 @@ export const setBackIDInfo = data => {
 export const faceMatchInfo = data => {
   return {
     type: FACE_MATCH,
+    payload: data,
+  };
+};
+
+export const getVerificationHistory = data => {
+  return {
+    type: GET_CUSTOMER_HISTORY,
     payload: data,
   };
 };

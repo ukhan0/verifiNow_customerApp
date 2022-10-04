@@ -6,9 +6,10 @@ import {
   Image,
   ScrollView,
   Linking,
-  AppState,
+  FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  LogBox,
 } from 'react-native';
 import moment from 'moment/moment';
 import {useSelector} from 'react-redux';
@@ -22,19 +23,19 @@ import {getCustomerHistory} from '../redux/auth/apis';
 
 const CustomerSupport = () => {
   const [showLoading, setShowLoading] = useState(false);
-  const [customerHistory, setCustomerHistory] = useState([]);
   const [showCallButtons, setShowCallButtons] = useState(false);
 
   const modalRef = useRef();
   const navigation = useNavigation();
   const userInfo = useSelector(state => state.auth?.customerInfo);
+  const customerHistory = useSelector(state => state.auth?.verificationHistory);
 
   useEffect(() => {
+    LogBox.ignoreAllLogs();
     const unsubscribe = navigation.addListener('focus', () => {
       (async () => {
         setShowLoading(true);
-        const data = await getCustomerHistory(userInfo?.id);
-        setCustomerHistory(data ? data : []);
+        await getCustomerHistory(userInfo?.id);
         setShowLoading(false);
       })();
     });
@@ -157,56 +158,63 @@ const CustomerSupport = () => {
             <ActivityIndicator size={30} color="#e60000" />
           </View>
         ) : !showLoading && customerHistory?.length ? (
-          customerHistory.map((info, index) => {
-            const calenderDate = moment(info?.created_at).format('MM/DD/YYYY');
-            const time = moment(info?.created_at).format('h:mm a');
-
-            return (
-              <View
-                key={index}
-                style={{
-                  flexGrow: 1,
-                  marginHorizontal: 20,
-                  opacity: showCallButtons ? 0.5 : 1,
-                }}>
-                <View style={{marginTop: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto-Light',
-                      color: '#000',
-                    }}>
-                    Time : {time}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto-Light',
-                      color: '#000',
-                      marginTop: 5,
-                    }}>
-                    Date : {calenderDate}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto-Light',
-                      color: '#000',
-                      marginTop: 5,
-                    }}>
-                    {info?.type} {info?.status == '0' ? 'FAILED' : 'PASSED'}
-                  </Text>
-                </View>
+          <FlatList
+            nestedScrollEnabled
+            style={{maxHeight: 500}}
+            data={customerHistory}
+            keyExtractor={(item, index) => index}
+            renderItem={(info, index) => {
+              const calenderDate = moment(info?.item?.created_at).format(
+                'MM/DD/YYYY',
+              );
+              const time = moment(info?.item?.created_at).format('h:mm a');
+              return (
                 <View
+                  key={index}
                   style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#757575',
-                    marginTop: 25,
-                  }}
-                />
-              </View>
-            );
-          })
+                    flexGrow: 1,
+                    marginHorizontal: 20,
+                    opacity: showCallButtons ? 0.5 : 1,
+                  }}>
+                  <View style={{marginTop: 20}}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Roboto-Light',
+                        color: '#000',
+                      }}>
+                      Time : {time}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Roboto-Light',
+                        color: '#000',
+                        marginTop: 5,
+                      }}>
+                      Date : {calenderDate}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Roboto-Light',
+                        color: '#000',
+                        marginTop: 5,
+                      }}>
+                      {info?.item?.type} {info?.item?.status == '0' ? 'FAILED' : 'PASSED'}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#757575',
+                      marginTop: 25,
+                    }}
+                  />
+                </View>
+              );
+            }}
+          />
         ) : (
           <View>
             <Text
@@ -214,7 +222,7 @@ const CustomerSupport = () => {
                 fontSize: 16,
                 fontFamily: 'Roboto-Light',
                 color: '#000',
-                marginTop: 5,
+                marginVertical: 5,
                 alignSelf: 'center',
               }}>
               No History Found

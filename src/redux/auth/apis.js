@@ -1,4 +1,4 @@
-import {inCodeOnBoard} from './actions';
+import {getVerificationHistory, inCodeOnBoard} from './actions';
 import {SERVER_URL} from '../../utils/baseUrl';
 import {store} from '../stores/configureStore';
 
@@ -73,6 +73,7 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
 
 export const selfieVerificationApi = async data => {
   try {
+    const userID = store.getState().auth.customerInfo?.id;
     const token = store.getState().auth.customerInfo?.access_token;
 
     const response = await fetch(SERVER_URL + '/user/selfieVerification', {
@@ -92,6 +93,7 @@ export const selfieVerificationApi = async data => {
       duration: Snackbar.LENGTH_SHORT,
       backgroundColor: '#575DFB',
     });
+    getCustomerHistory(userID);
   } catch (error) {
     console.log('incode onboarding =>', error);
     Snackbar.show({
@@ -117,8 +119,8 @@ export const getCustomerHistory = async (id) => {
       },
     );
     const resp = await response.json();
-    if (resp?.status) {
-      return resp?.data;
+    if (resp?.data) {
+      store.dispatch(getVerificationHistory(resp?.data));
     }
   } catch (error) {
     Snackbar.show({
