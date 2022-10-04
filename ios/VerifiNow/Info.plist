@@ -36,11 +36,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow VerifiNow to access camera?</string>
+	<string>VerifiNow needs access to your camera in order to be scan your ID and take a selfie</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow VerifiNow to access location?</string>
+	<string>VerifiNow needs access to your location</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow VerifiNow to access microphone to record audio</string>
+	<string>VerifiNow needs access to your microphone in order to record your voice</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Black.ttf</string>
