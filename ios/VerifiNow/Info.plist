@@ -36,11 +36,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>Allow VerifiNow to access camera?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Allow VerifiNow to access location?</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>YOUR TEXT</string>
+	<string>Allow VerifiNow to access microphone to record audio</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Black.ttf</string>
