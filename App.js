@@ -15,7 +15,6 @@ import {store, persistor} from './src/redux/stores/configureStore';
 import {
   isAudioAuthenticate,
   isIncodeAuthenticate,
-  isUserExist,
   isUserLoggedIn,
 } from './src/redux/auth/selectors';
 
@@ -32,7 +31,6 @@ import {apiKey, apiUrl} from './src/utils/incodeCredentials';
 const Stack = createNativeStackNavigator();
 
 const AppContainer = () => {
-  const userExist = isUserExist();
   const accessToken = isUserLoggedIn();
   const audioAuthenticate = isAudioAuthenticate();
   const incodeAuthenticate = isIncodeAuthenticate();

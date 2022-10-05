@@ -8,6 +8,3 @@ export const isAudioAuthenticate = () =>
 
 export const isIncodeAuthenticate = () =>
   useSelector(state => state.auth?.incode_onboarding);
-
-export const isUserExist = () =>
-  useSelector(state => state.auth?.userExist);
