@@ -20,6 +20,7 @@ import Button from '../components/Button';
 import Header from '../components/Header';
 import LogoutModal from '../components/LogoutModal';
 import {getCustomerHistory} from '../redux/auth/apis';
+import { twillioNumber } from '../utils/incodeCredentials';
 
 const CustomerSupport = () => {
   const [showLoading, setShowLoading] = useState(false);
@@ -115,11 +116,11 @@ const CustomerSupport = () => {
             }}>
             <Button
               icon={true}
-              title="Call +1 (424) 577-4760"
+              title={`Call ${twillioNumber}`}
               tintColor="#969696"
               textStyle={{color: '#575DFB'}}
               onClick={() => {
-                Linking.openURL(`tel:+14245774760`);
+                Linking.openURL(`tel:${twillioNumber}`);
               }}
               style={{
                 borderWidth: 1,
