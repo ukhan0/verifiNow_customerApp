@@ -1,5 +1,6 @@
 export const LOGIN = 'LOGIN';
 export const LOG_OUT = 'LOG_OUT';
+export const USER_EXIST = 'USER_EXIST';
 export const FACE_MATCH = 'FACE_MATCH';
 export const SELFIE_INFO = 'SELFIE_INFO';
 export const BACK_ID_INFO = 'BACK_ID_INFO';

@@ -15,6 +15,7 @@ import {store, persistor} from './src/redux/stores/configureStore';
 import {
   isAudioAuthenticate,
   isIncodeAuthenticate,
+  isUserExist,
   isUserLoggedIn,
 } from './src/redux/auth/selectors';
 
@@ -25,11 +26,13 @@ import VoiceScreen from './src/screens/VoiceScreen';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
-import { apiKey, apiUrl } from './src/utils/incodeCredentials';
+import UserAlreadyExist from './src/screens/UserAlreadyExist';
+import {apiKey, apiUrl} from './src/utils/incodeCredentials';
 
 const Stack = createNativeStackNavigator();
 
 const AppContainer = () => {
+  const userExist = isUserExist();
   const accessToken = isUserLoggedIn();
   const audioAuthenticate = isAudioAuthenticate();
   const incodeAuthenticate = isIncodeAuthenticate();
@@ -42,6 +45,11 @@ const AppContainer = () => {
             <Stack.Screen
               name="IncodeOnboarding"
               component={IncodeOnboarding}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+            <Stack.Screen
+              name="UserAlreadyExist"
+              component={UserAlreadyExist}
               options={{animationEnabled: false, headerShown: false}}
             />
           </Stack.Navigator>

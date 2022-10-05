@@ -1,6 +1,7 @@
 import {
   LOGIN,
   LOG_OUT,
+  USER_EXIST,
   FACE_MATCH,
   SELFIE_INFO,
   BACK_ID_INFO,
@@ -20,6 +21,7 @@ const INITIAL_STATE = {
   customerInfo: {},
   backIDInfo: null,
   selfieInfo: null,
+  userExist: false,
   frontIDInfo: null,
   customerUUID: null,
   customerToken: null,
@@ -69,6 +71,9 @@ export default (state = INITIAL_STATE, action) => {
 
     case GET_CUSTOMER_HISTORY:
       return {...state, verificationHistory: payload};
+
+    case USER_EXIST:
+      return {...state, userExist: payload};
 
     case LOG_OUT:
       return INITIAL_STATE;
