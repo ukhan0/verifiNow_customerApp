@@ -3,12 +3,17 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
+use_frameworks!
+pod 'Firebase/Messaging'
 
 production = ENV["PRODUCTION"] == "1"
 
 target 'VerifiNow' do
   config = use_native_modules!
+  use_frameworks! :linkage => :static
+  permissions_path = '../node_modules/react-native-permissions/ios'
 
+  pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone"
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -18,17 +23,33 @@ target 'VerifiNow' do
     :production => production,
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled,
+    # :flipper_configuration => FlipperConfiguration.enabled,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+  pod 'react-native-incode-sdk', :path => '../node_modules/react-native-incode-sdk/ios'
+  
   target 'VerifiNowTests' do
     inherit! :complete
     # Pods for testing
   end
 
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      if pod.name.eql?('RNPermissions') || pod.name.start_with?('Permission-')
+        def pod.build_type;
+          Pod::BuildType.static_library # I assume you use CocoaPods >= 1.9
+        end
+      end
+    end
+  end
+
+  # use_flipper!()
   post_install do |installer|
+    # flipper_post_install(installer)
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end

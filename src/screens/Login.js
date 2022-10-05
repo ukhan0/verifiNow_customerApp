@@ -8,17 +8,76 @@ import {
   StatusBar,
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
-import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
 
+import {
+  audioOnBoard,
+  inCodeOnBoard,
+  login,
+  loginfailed,
+  loginSuccess,
+} from '../redux/auth/actions';
 import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import {SERVER_URL} from '../utils/baseUrl';
+import {fcmTokenApi} from '../redux/auth/apis';
 
 const Login = () => {
-  const [userName, setUserName] = useState('');
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigation = useNavigation();
+  const loading = useSelector(state => state.auth.loading);
+
+  function validateEmail(email) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  const storeFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    console.log('fcmToken =>', fcmToken);
+    fcmTokenApi(fcmToken);
+  };
+
+  const loginApi = async () => {
+    try {
+      dispatch(login());
+      const response = await fetch(SERVER_URL + '/customers/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+      const resp = await response.json();
+      if (resp?.data) {
+        dispatch(loginSuccess(resp?.data));
+        if (resp?.data?.audio_onboarding) {
+          dispatch(audioOnBoard(resp?.data?.audio_onboarding));
+        }
+        if (resp?.data?.incode_onboarding) {
+          dispatch(inCodeOnBoard(resp?.data?.incode_onboarding));
+        }
+        storeFcmToken();
+      } else {
+        Snackbar.show({
+          text: resp?.message,
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
+        });
+      }
+    } catch (error) {
+      console.log('Login Error =>', error);
+    } finally {
+      dispatch(loginfailed());
+    }
+  };
 
   return (
     <View
@@ -28,7 +87,7 @@ const Login = () => {
       }}>
       <Header />
       <ScrollView
-        keyboardShouldPersistTaps='always'
+        keyboardShouldPersistTaps="always"
         contentContainerStyle={{flexGrow: 1}}
         showsHorizontalScrollIndicator={false}>
         <Image
@@ -49,7 +108,7 @@ const Login = () => {
                 fontFamily: 'Roboto-Regular',
                 color: '#000',
               }}>
-              Name
+              Email
             </Text>
             <View
               style={{
@@ -74,15 +133,16 @@ const Login = () => {
               <TextInput
                 placeholder="Ex. Saul Ramirez"
                 placeholderTextColor="#C8C8C8"
-                value={userName}
-                onChange={name => setUserName(name)}
+                value={email}
+                onChangeText={name => setEmail(name)}
                 style={{
                   flexGrow: 1,
                   padding: 0,
                   marginLeft: 15,
-                  marginRight: userName ? 50 : 0,
+                  marginRight: email ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
+                  color: '#000',
                 }}
               />
             </View>
@@ -129,6 +189,7 @@ const Login = () => {
                   marginRight: password ? 50 : 0,
                   fontFamily: 'Roboto-Regular',
                   fontSize: 16,
+                  color: '#000',
                 }}
               />
             </View>
@@ -146,11 +207,18 @@ const Login = () => {
           </TouchableOpacity> */}
           <View style={{marginTop: 40}}>
             <Button
+              loading={loading}
               onClick={() => {
-                if (userName && password) {
-                  navigation.navigate('UploadDocument');
-                  setUserName('');
-                  setPassword('');
+                if (email && password) {
+                  if (!validateEmail(email)) {
+                    Snackbar.show({
+                      text: 'Email input is wrong! Use abc@xyz.com pattern',
+                      duration: Snackbar.LENGTH_SHORT,
+                      backgroundColor: '#575DFB',
+                    });
+                  } else {
+                    loginApi();
+                  }
                 } else {
                   Snackbar.show({
                     text: 'Please fill all fields',

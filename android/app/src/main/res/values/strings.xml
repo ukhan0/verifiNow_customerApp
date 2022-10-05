@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VerifiNow</string>
+<string name="onboard_sdk_id_type_chooser_title">Select the document you want to use</string>
 </resources>
