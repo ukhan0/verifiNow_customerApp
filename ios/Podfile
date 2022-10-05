@@ -4,8 +4,6 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 use_frameworks!
-pod 'Firebase/Messaging'
-
 production = ENV["PRODUCTION"] == "1"
 
 target 'VerifiNow' do
@@ -28,8 +26,10 @@ target 'VerifiNow' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
-  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'react-native-incode-sdk', :path => '../node_modules/react-native-incode-sdk/ios'
   
   target 'VerifiNowTests' do
