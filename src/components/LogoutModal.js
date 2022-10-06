@@ -100,7 +100,9 @@ const LogoutModal = forwardRef((props, ref) => {
                       Cancel
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => dispatch(logout())}>
+                  <TouchableOpacity
+                    style={{padding: 5}}
+                    onPress={() => dispatch(logout())}>
                     <Text
                       style={{
                         fontSize: 14,
