@@ -83,6 +83,10 @@ const VoiceScreen = () => {
       } else {
         request(PERMISSIONS.IOS.MICROPHONE).then(result => {
           console.log('result =>', result);
+          if (result === 'granted') {
+            AudioRecord.init(AUDIO_OPTIONS);
+            AudioRecord.start();
+          }
         });
       }
     }
@@ -213,7 +217,7 @@ const VoiceScreen = () => {
                 textAlign: 'center',
                 marginHorizontal: 40,
               }}>
-                My account is secure because my voice is my password
+              My account is secure because my voice is my password
             </Text>
             {startRecording ? (
               <TouchableOpacity
