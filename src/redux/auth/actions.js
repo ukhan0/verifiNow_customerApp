@@ -1,5 +1,6 @@
 import {
   LOGIN,
+  LOADER,
   LOG_OUT,
   USER_EXIST,
   FACE_MATCH,
@@ -113,6 +114,13 @@ export const getVerificationHistory = data => {
 export const userExist = bool => {
   return {
     type: USER_EXIST,
+    payload: bool,
+  };
+};
+
+export const showLoader = bool => {
+  return {
+    type: LOADER,
     payload: bool,
   };
 };

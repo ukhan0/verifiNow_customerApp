@@ -25,6 +25,7 @@ const IncodeOnboarding = () => {
 
   const accessToken = isUserLoggedIn();
   const incodeAuthenticate = isIncodeAuthenticate();
+  const loader = useSelector(state => state.auth?.loader);
   const isUserExist = useSelector(state => state.auth?.userExist);
   const userId = useSelector(state => state.auth?.customerInfo?.id.toString());
 
@@ -175,6 +176,11 @@ const IncodeOnboarding = () => {
             storeIncodeData('success');
             IncodeSdk.finishOnboardingFlow();
           } else {
+            Snackbar.show({
+              text: 'Invalid Information, Please Try Again',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#575DFB',
+            });
             setShowLoading(true);
             startOnboarding();
           }
@@ -183,7 +189,7 @@ const IncodeOnboarding = () => {
     ];
   };
 
-  if (showLoading) {
+  if (showLoading || loader) {
     return (
       <View
         style={{

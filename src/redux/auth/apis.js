@@ -1,4 +1,4 @@
-import {getVerificationHistory, inCodeOnBoard, logout} from './actions';
+import {getVerificationHistory, inCodeOnBoard, logout, showLoader} from './actions';
 import {SERVER_URL} from '../../utils/baseUrl';
 import {store} from '../stores/configureStore';
 
@@ -31,6 +31,8 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
     const frontIDInfo = store.getState().auth?.frontIDInfo;
     const backIDInfo = store.getState().auth?.backIDInfo;
     const selfieInfo = store.getState().auth?.selfieInfo;
+
+    store.dispatch(showLoader(true));
 
     if (!faceMatchInfo?.existingUser) {
       const response = await fetch(SERVER_URL + '/user/saveCustomerProfile', {
@@ -68,6 +70,8 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
       duration: Snackbar.LENGTH_SHORT,
       backgroundColor: '#575DFB',
     });
+  } finally {
+    store.dispatch(showLoader(false));
   }
 };
 

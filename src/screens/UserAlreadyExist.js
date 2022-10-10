@@ -1,30 +1,17 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   View,
   Text,
-  StatusBar,
   Image,
-  ScrollView,
-  Linking,
-  FlatList,
   TouchableOpacity,
-  ActivityIndicator,
-  LogBox,
 } from 'react-native';
-import moment from 'moment/moment';
-import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
 
 import images from '../constants/images';
-import Button from '../components/Button';
 import Header from '../components/Header';
 import LogoutModal from '../components/LogoutModal';
-import {getCustomerHistory} from '../redux/auth/apis';
-import {twillioNumber} from '../utils/incodeCredentials';
 
 const UserAlreadyExist = () => {
   const modalRef = useRef();
-  const navigation = useNavigation();
 
   return (
     <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
