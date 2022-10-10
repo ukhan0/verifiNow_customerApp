@@ -1,4 +1,4 @@
-import {getVerificationHistory, inCodeOnBoard} from './actions';
+import {getVerificationHistory, inCodeOnBoard, logout} from './actions';
 import {SERVER_URL} from '../../utils/baseUrl';
 import {store} from '../stores/configureStore';
 
@@ -121,6 +121,32 @@ export const getCustomerHistory = async (id) => {
     const resp = await response.json();
     if (resp?.data) {
       store.dispatch(getVerificationHistory(resp?.data));
+    }
+  } catch (error) {
+    Snackbar.show({
+      text: 'Something went wrong',
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  }
+};
+
+export const logoutApi = async () => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+
+    const response = await fetch(
+      SERVER_URL + `/user/logout`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'POST',
+      },
+    );
+    const resp = await response.json();
+    if (resp?.status) {
+      store.dispatch(logout());
     }
   } catch (error) {
     Snackbar.show({
