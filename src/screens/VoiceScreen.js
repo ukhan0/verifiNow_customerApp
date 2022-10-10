@@ -11,7 +11,6 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Sound from 'react-native-sound';
-import {useSelector} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import RNExitApp from 'react-native-exit-app';
 import AudioRecord from 'react-native-audio-record';
@@ -28,8 +27,6 @@ const VoiceScreen = () => {
   const navigation = useNavigation();
 
   const token = isUserLoggedIn();
-
-  const userInfo = useSelector(state => state.auth?.customerInfo);
 
   const [showLoading, setShowLoading] = useState(false);
   const [stopRecording, setStopRecording] = useState(false);
@@ -83,6 +80,10 @@ const VoiceScreen = () => {
       } else {
         request(PERMISSIONS.IOS.MICROPHONE).then(result => {
           console.log('result =>', result);
+          if (result === 'granted') {
+            AudioRecord.init(AUDIO_OPTIONS);
+            AudioRecord.start();
+          }
         });
       }
     }
@@ -117,10 +118,6 @@ const VoiceScreen = () => {
       });
     });
     audioSound.setVolume(1);
-  };
-
-  const stopPlay = () => {
-    audioSound.stop(() => console.log('Sound stop =>'));
   };
 
   const uploadAudioVoice = async () => {
@@ -213,7 +210,7 @@ const VoiceScreen = () => {
                 textAlign: 'center',
                 marginHorizontal: 40,
               }}>
-                My account is secure because my voice is my password
+              My account is secure because my voice is my password
             </Text>
             {startRecording ? (
               <TouchableOpacity
@@ -327,6 +324,7 @@ const VoiceScreen = () => {
                     }}
                   />
                   <TouchableOpacity
+                    disabled={playSuccessfully}
                     onPress={() => {
                       setStartRecording(true);
                       setListenRecording(false);

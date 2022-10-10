@@ -1,4 +1,4 @@
-import {getVerificationHistory, inCodeOnBoard} from './actions';
+import {getVerificationHistory, inCodeOnBoard, logout, showLoader} from './actions';
 import {SERVER_URL} from '../../utils/baseUrl';
 import {store} from '../stores/configureStore';
 
@@ -31,6 +31,8 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
     const frontIDInfo = store.getState().auth?.frontIDInfo;
     const backIDInfo = store.getState().auth?.backIDInfo;
     const selfieInfo = store.getState().auth?.selfieInfo;
+
+    store.dispatch(showLoader(true));
 
     if (!faceMatchInfo?.existingUser) {
       const response = await fetch(SERVER_URL + '/user/saveCustomerProfile', {
@@ -68,6 +70,8 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
       duration: Snackbar.LENGTH_SHORT,
       backgroundColor: '#575DFB',
     });
+  } finally {
+    store.dispatch(showLoader(false));
   }
 };
 
@@ -121,6 +125,32 @@ export const getCustomerHistory = async (id) => {
     const resp = await response.json();
     if (resp?.data) {
       store.dispatch(getVerificationHistory(resp?.data));
+    }
+  } catch (error) {
+    Snackbar.show({
+      text: 'Something went wrong',
+      duration: Snackbar.LENGTH_SHORT,
+      backgroundColor: '#575DFB',
+    });
+  }
+};
+
+export const logoutApi = async () => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+
+    const response = await fetch(
+      SERVER_URL + `/user/logout`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'POST',
+      },
+    );
+    const resp = await response.json();
+    if (resp?.status) {
+      store.dispatch(logout());
     }
   } catch (error) {
     Snackbar.show({

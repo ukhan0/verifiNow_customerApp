@@ -1,5 +1,7 @@
 export const LOGIN = 'LOGIN';
+export const LOADER = 'LOADER';
 export const LOG_OUT = 'LOG_OUT';
+export const USER_EXIST = 'USER_EXIST';
 export const FACE_MATCH = 'FACE_MATCH';
 export const SELFIE_INFO = 'SELFIE_INFO';
 export const BACK_ID_INFO = 'BACK_ID_INFO';
@@ -12,4 +14,3 @@ export const AUDIO_ON_BOARDING = 'AUDIO_ON_BOARDING';
 export const INCODE_ON_BOARDING = 'INCODE_ON_BOARDING';
 export const GET_CUSTOMER_HISTORY = 'GET_CUSTOMER_HISTORY';
 export const CUSTOMER_INTERVIEW_ID = 'CUSTOMER_INTERVIEW_ID';
-

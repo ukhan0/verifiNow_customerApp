@@ -1,19 +1,34 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
-import {StatusBar, Modal, TouchableOpacity, View, Text} from 'react-native';
+import {
+  StatusBar,
+  Modal,
+  TouchableOpacity,
+  View,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 import {logout} from '../redux/auth/actions';
+import {logoutApi} from '../redux/auth/apis';
 
 const LogoutModal = forwardRef((props, ref) => {
   const dispatch = useDispatch();
 
   const [modalShow, setModalShow] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
     getAlert() {
       setModalShow(true);
     },
   }));
+
+  const logoutFunc = async () => {
+    setShowLoading(true);
+    await logoutApi();
+    setShowLoading(false);
+  };
 
   return (
     <>
@@ -100,16 +115,24 @@ const LogoutModal = forwardRef((props, ref) => {
                       Cancel
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => dispatch(logout())}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto-Bold',
-                        color: '#000',
-                      }}>
-                      Ok
-                    </Text>
-                  </TouchableOpacity>
+                  {!showLoading ? (
+                    <TouchableOpacity
+                      style={{padding: 5}}
+                      onPress={() => logoutFunc()}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Roboto-Bold',
+                          color: '#000',
+                        }}>
+                        Ok
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <View style={{alignItems: 'center'}}>
+                      <ActivityIndicator size="small" color="#000" />
+                    </View>
+                  )}
                 </View>
               </View>
             </View>

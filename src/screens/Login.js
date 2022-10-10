@@ -134,6 +134,7 @@ const Login = () => {
                 placeholder="Ex. Saul Ramirez"
                 placeholderTextColor="#C8C8C8"
                 value={email}
+                autoCapitalize='none'
                 onChangeText={name => setEmail(name)}
                 style={{
                   flexGrow: 1,
@@ -181,6 +182,7 @@ const Login = () => {
                 placeholderTextColor="#C8C8C8"
                 secureTextEntry={true}
                 value={password}
+                autoCapitalize='none'
                 onChangeText={password => setPassword(password)}
                 style={{
                   flexGrow: 1,

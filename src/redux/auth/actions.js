@@ -1,6 +1,8 @@
 import {
   LOGIN,
+  LOADER,
   LOG_OUT,
+  USER_EXIST,
   FACE_MATCH,
   SELFIE_INFO,
   BACK_ID_INFO,
@@ -106,5 +108,19 @@ export const getVerificationHistory = data => {
   return {
     type: GET_CUSTOMER_HISTORY,
     payload: data,
+  };
+};
+
+export const userExist = bool => {
+  return {
+    type: USER_EXIST,
+    payload: bool,
+  };
+};
+
+export const showLoader = bool => {
+  return {
+    type: LOADER,
+    payload: bool,
   };
 };

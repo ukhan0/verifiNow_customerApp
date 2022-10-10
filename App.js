@@ -25,7 +25,9 @@ import VoiceScreen from './src/screens/VoiceScreen';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
-import { apiKey, apiUrl } from './src/utils/incodeCredentials';
+import UserAlreadyExist from './src/screens/UserAlreadyExist';
+import {apiKey, apiUrl} from './src/utils/incodeCredentials';
+import { logout } from './src/redux/auth/actions';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +44,11 @@ const AppContainer = () => {
             <Stack.Screen
               name="IncodeOnboarding"
               component={IncodeOnboarding}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+            <Stack.Screen
+              name="UserAlreadyExist"
+              component={UserAlreadyExist}
               options={{animationEnabled: false, headerShown: false}}
             />
           </Stack.Navigator>
@@ -94,6 +101,8 @@ const AppContainer = () => {
 
 const App = () => {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
+
+  var ws = new WebSocket('ws://staging-api.verifinow.io');
 
   const showNotification = notification => {
     Alert.alert(
@@ -179,6 +188,30 @@ const App = () => {
 
       requestPermissions: true,
     });
+  }, []);
+
+  useEffect(() => {
+    ws.onopen = () => {
+      console.log('Connected to the server');
+    };
+    ws.onerror = e => {
+      console.log('OnError =>', e.message);
+    };
+    ws.onmessage = e => {
+      const data = JSON.parse(e.data);
+      const userId = store.getState().auth.customerInfo?.id;
+      if (userId) {
+        if (data?.data?.custmId == userId) {
+          store.dispatch(logout());
+        }
+      }
+    };
+
+    return () => {
+      ws.onclose = e => {
+        console.log('Disconnected. Check internet or server.');
+      };
+    }
   }, []);
 
   return (

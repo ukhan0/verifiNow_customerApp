@@ -1,6 +1,8 @@
 import {
   LOGIN,
+  LOADER,
   LOG_OUT,
+  USER_EXIST,
   FACE_MATCH,
   SELFIE_INFO,
   BACK_ID_INFO,
@@ -16,10 +18,12 @@ import {
 } from './types';
 
 const INITIAL_STATE = {
+  loader: false,
   loading: false,
   customerInfo: {},
   backIDInfo: null,
   selfieInfo: null,
+  userExist: false,
   frontIDInfo: null,
   customerUUID: null,
   customerToken: null,
@@ -69,6 +73,12 @@ export default (state = INITIAL_STATE, action) => {
 
     case GET_CUSTOMER_HISTORY:
       return {...state, verificationHistory: payload};
+
+    case USER_EXIST:
+      return {...state, userExist: payload};
+
+    case LOADER:
+      return {...state, loader: payload};
 
     case LOG_OUT:
       return INITIAL_STATE;
