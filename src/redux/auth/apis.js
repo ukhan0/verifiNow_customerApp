@@ -125,6 +125,13 @@ export const getCustomerHistory = async (id) => {
     const resp = await response.json();
     if (resp?.data) {
       store.dispatch(getVerificationHistory(resp?.data));
+    } else if (resp?.errors[0]?.message === 'E_UNAUTHORIZED_ACCESS: Unauthorized access') {
+      store.dispatch(logout());
+      Snackbar.show({
+        text: 'You are unauthorized user. Please contact administrator.',
+        duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: '#575DFB',
+      });
     }
   } catch (error) {
     Snackbar.show({
@@ -158,5 +165,7 @@ export const logoutApi = async () => {
       duration: Snackbar.LENGTH_SHORT,
       backgroundColor: '#575DFB',
     });
+  } finally {
+    store.dispatch(logout());
   }
 };

@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Sound from 'react-native-sound';
+import {useDispatch} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import RNExitApp from 'react-native-exit-app';
 import AudioRecord from 'react-native-audio-record';
@@ -21,9 +22,11 @@ import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import {SERVER_URL} from '../utils/baseUrl';
+import { logout } from '../redux/auth/actions';
 import {isUserLoggedIn} from '../redux/auth/selectors';
 
 const VoiceScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const token = isUserLoggedIn();
@@ -145,7 +148,15 @@ const VoiceScreen = () => {
           index: 0,
           routes: [{name: 'ThankYou', params: {response: resp?.data}}],
         });
-      } else {
+      } else if (resp?.errors[0]?.message === 'E_UNAUTHORIZED_ACCESS: Unauthorized access') {
+        dispatch(logout());
+        Snackbar.show({
+          text: 'You are unauthorized user. Please contact administrator.',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
+        });
+      } 
+      else {
         Snackbar.show({
           text: resp?.message,
           duration: Snackbar.LENGTH_SHORT,

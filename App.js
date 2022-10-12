@@ -102,8 +102,6 @@ const AppContainer = () => {
 const App = () => {
   LogBox.ignoreLogs(['new NativeEventEmitter']);
 
-  var ws = new WebSocket('ws://staging-api.verifinow.io');
-
   const showNotification = notification => {
     Alert.alert(
       notification?.notification?.title,
@@ -191,28 +189,40 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    socketConnection();
+  }, []);
+
+  const socketConnection = () => {
+    var ws = new WebSocket('wss://staging-api.verifinow.io');
+
     ws.onopen = () => {
       console.log('Connected to the server');
     };
     ws.onerror = e => {
-      console.log('OnError =>', e.message);
+      console.log('OnError =>', e);
+      ws.close();
     };
     ws.onmessage = e => {
+      console.log('Listening', e.data);
       const data = JSON.parse(e.data);
       const userId = store.getState().auth.customerInfo?.id;
       if (userId) {
         if (data?.data?.custmId == userId) {
           store.dispatch(logout());
+          Snackbar.show({
+            text: 'You are unauthorized user. Please contact administrator.',
+            duration: Snackbar.LENGTH_SHORT,
+            backgroundColor: '#575DFB',
+          });
         }
       }
     };
 
-    return () => {
-      ws.onclose = e => {
-        console.log('Disconnected. Check internet or server.');
-      };
-    }
-  }, []);
+    ws.onclose = e => {
+      console.log('Disconnected. Check internet or server.', e);
+      socketConnection();
+    };
+  }
 
   return (
     <Provider store={store}>
