@@ -24,7 +24,6 @@ import { twillioNumber } from '../utils/incodeCredentials';
 
 const CustomerSupport = () => {
   const [showLoading, setShowLoading] = useState(false);
-  const [showCallButtons, setShowCallButtons] = useState(false);
 
   const modalRef = useRef();
   const navigation = useNavigation();
@@ -55,7 +54,6 @@ const CustomerSupport = () => {
             position: 'absolute',
             top: 50,
             right: 20,
-            opacity: showCallButtons ? 0.5 : 1,
           }}>
           <Image source={images.logout} style={{width: 23, height: 23}} />
         </TouchableOpacity>
@@ -65,7 +63,6 @@ const CustomerSupport = () => {
             marginHorizontal: 20,
             marginTop: StatusBar.currentHeight + 70,
             alignItems: 'center',
-            opacity: showCallButtons ? 0.5 : 1,
           }}>
           <Image
             resizeMode="contain"
@@ -94,53 +91,17 @@ const CustomerSupport = () => {
             our customer support agents.App will ask you to verify yourself by
             taking a selfie.
           </Text>
-          {!showCallButtons && (
-            <>
-              <Button
-                icon={true}
-                onClick={() => setShowCallButtons(true)}
-                title="Call Customer support"
-                style={{
-                  width: 220,
-                  backgroundColor: '#4CD964',
-                  marginVertical: 20,
-                }}
-              />
-            </>
-          )}
-        </View>
-        {showCallButtons && (
-          <View
+          <Button
+            icon={true}
+            onClick={() => Linking.openURL(`tel:${twillioNumber}`)}
+            title="Call Customer support"
             style={{
-              marginHorizontal: 20,
-            }}>
-            <Button
-              icon={true}
-              title={`Call ${twillioNumber}`}
-              tintColor="#969696"
-              textStyle={{color: '#575DFB'}}
-              onClick={() => {
-                Linking.openURL(`tel:${twillioNumber}`);
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: '#B4B4B8',
-                backgroundColor: '#fff',
-              }}
-            />
-            <Button
-              title="Cancel"
-              onClick={() => setShowCallButtons(false)}
-              textStyle={{color: '#575DFB'}}
-              style={{
-                marginTop: 15,
-                borderWidth: 1,
-                borderColor: '#B4B4B8',
-                backgroundColor: '#fff',
-              }}
-            />
-          </View>
-        )}
+              width: 220,
+              backgroundColor: '#4CD964',
+              marginVertical: 20,
+            }}
+          />
+        </View>
         <Text
           style={{
             fontSize: 16,
@@ -149,7 +110,6 @@ const CustomerSupport = () => {
             marginLeft: 20,
             marginTop: 50,
             marginBottom: 20,
-            opacity: showCallButtons ? 0.5 : 1,
           }}>
           Call History
         </Text>
@@ -175,7 +135,6 @@ const CustomerSupport = () => {
                   style={{
                     flexGrow: 1,
                     marginHorizontal: 20,
-                    opacity: showCallButtons ? 0.5 : 1,
                   }}>
                   <View style={{marginTop: 20}}>
                     <Text
