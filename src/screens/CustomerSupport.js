@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   LogBox,
+  AppState,
 } from 'react-native';
 import moment from 'moment/moment';
 import {useSelector} from 'react-redux';
@@ -31,6 +32,8 @@ const CustomerSupport = () => {
   const customerHistory = useSelector(state => state.auth?.verificationHistory);
 
   useEffect(() => {
+    AppState.addEventListener('change', handleChange);  
+  
     LogBox.ignoreAllLogs();
     const unsubscribe = navigation.addListener('focus', () => {
       (async () => {
@@ -39,8 +42,19 @@ const CustomerSupport = () => {
         setShowLoading(false);
       })();
     });
-    return unsubscribe;
+    return () => {
+      unsubscribe;
+      AppState.removeEventListener('change', handleChange);  
+    }
   }, [userInfo, navigation]);
+  
+  const handleChange = async (newState) => {
+    if (newState === "active") {
+      setShowLoading(true);
+      await getCustomerHistory(userInfo?.id);
+      setShowLoading(false);
+    }
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
