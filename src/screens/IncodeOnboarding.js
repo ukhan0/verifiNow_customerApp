@@ -100,8 +100,7 @@ const IncodeOnboarding = () => {
     })
       .then(result => {
         if (result.status === 'userCancelled') {
-          setShowLoading(true);
-          startOnboarding();
+          navigation.navigate('UploadDocument');
         }
       })
       .catch(error => console.log(error));

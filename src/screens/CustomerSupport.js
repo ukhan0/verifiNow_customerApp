@@ -139,6 +139,7 @@ const CustomerSupport = () => {
             data={customerHistory}
             keyExtractor={(item, index) => index}
             renderItem={(info, index) => {
+              console.log('info?.item?.created_at', info?.item?.created_at);
               const calenderDate = moment(info?.item?.created_at).format(
                 'MM/DD/YYYY',
               );
