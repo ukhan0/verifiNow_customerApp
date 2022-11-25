@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, Text, StatusBar} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import IncodeSdk from 'react-native-incode-sdk';
 import Snackbar from 'react-native-snackbar';
@@ -16,7 +16,7 @@ import {
   userExist,
 } from '../redux/auth/actions';
 import {storeIncodeInfoApi} from '../redux/auth/apis';
-import { apiKey, apiUrl } from '../utils/incodeCredentials';
+import {apiKey, apiUrl} from '../utils/incodeCredentials';
 import {isIncodeAuthenticate, isUserLoggedIn} from '../redux/auth/selectors';
 
 const IncodeOnboarding = () => {
@@ -36,22 +36,16 @@ const IncodeOnboarding = () => {
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!incodeAuthenticate) {
-        if (!isUserExist) {
-          initializeAndRunOnboarding();
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'UserAlreadyExist'}],
-          });
-        }
+    if (!incodeAuthenticate) {
+      if (!isUserExist) {
+        initializeAndRunOnboarding();
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'UserAlreadyExist'}],
+        });
       }
-    }, 2000);
-
-    return () => {
-      clearTimeout(timeout);
-    };
+    }
   }, [incodeAuthenticate, isUserExist]);
 
   const initializeAndRunOnboarding = async () => {
@@ -100,7 +94,7 @@ const IncodeOnboarding = () => {
     })
       .then(result => {
         if (result.status === 'userCancelled') {
-          navigation.navigate('UploadDocument');
+          navigation.navigate('TermsAndCondition');
         }
       })
       .catch(error => console.log(error));

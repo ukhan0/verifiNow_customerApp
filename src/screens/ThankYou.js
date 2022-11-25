@@ -2,13 +2,15 @@ import React from 'react';
 import {View, Text, StatusBar, ScrollView} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
-import {audioOnBoard} from '../redux/auth/actions';
+import {audioOnBoard, inCodeOnBoard} from '../redux/auth/actions';
 
 const ThankYou = route => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const userInfo = useSelector(state => state.auth?.customerInfo);
 
@@ -82,7 +84,9 @@ const ThankYou = route => {
                 style={{width: '45%', backgroundColor: '#4CD964'}}
               />
               <Button
-                // onClick={() => dispatch(audioOnBoard(audioResponse))}
+                onClick={() => {
+                  dispatch(inCodeOnBoard(null));
+                }}
                 title="Disagree"
                 style={{
                   width: '45%',

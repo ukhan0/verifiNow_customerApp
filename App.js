@@ -22,7 +22,7 @@ import {
 import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
 import VoiceScreen from './src/screens/VoiceScreen';
-import UploadDocument from './src/screens/UploadDocument';
+import TermsAndCondition from './src/screens/TermsAndCondition';
 import CustomerSupport from './src/screens/CustomerSupport';
 import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
@@ -41,7 +41,12 @@ const AppContainer = () => {
     if (!incodeAuthenticate) {
       return (
         <>
-          <Stack.Navigator initialRouteName="IncodeOnboarding">
+          <Stack.Navigator initialRouteName="TermsAndCondition">
+            <Stack.Screen
+              name="TermsAndCondition"
+              component={TermsAndCondition}
+              options={{animationEnabled: false, headerShown: false}}
+            />
             <Stack.Screen
               name="IncodeOnboarding"
               component={IncodeOnboarding}

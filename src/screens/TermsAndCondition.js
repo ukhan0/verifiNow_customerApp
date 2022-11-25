@@ -13,11 +13,10 @@ import images from '../constants/images';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
-const UploadDocument = () => {
+const TermsAndCondition = () => {
   const [termsToggle, setTermsToggle] = useState(false);
 
   const navigation = useNavigation();
-  console.log(termsToggle);
   return (
     <View
       style={{
@@ -70,13 +69,13 @@ const UploadDocument = () => {
             }}>
             {termsToggle ? (
               <Image
-                source={images.unChecked}
+                source={images.checked}
                 resizeMode="contain"
                 style={{width: 30, height: 30}}
               />
             ) : (
               <Image
-                source={images.checked}
+                source={images.unChecked}
                 resizeMode="contain"
                 style={{width: 30, height: 30}}
               />
@@ -100,11 +99,14 @@ const UploadDocument = () => {
             }}>
             <Button
               title="Next"
-              disable={termsToggle}
-              onClick={() => navigation.navigate('IncodeOnboarding')}
+              disable={!termsToggle ? true : false}
+              onClick={() => {
+                setTermsToggle(false);
+                navigation.navigate('IncodeOnboarding');
+              }}
               style={{
                 backgroundColor: '#E60000',
-                opacity: termsToggle ? 0.5 : 1,
+                opacity: !termsToggle ? 0.5 : 1,
               }}
             />
           </View>
@@ -114,4 +116,4 @@ const UploadDocument = () => {
   );
 };
 
-export default UploadDocument;
+export default TermsAndCondition;
