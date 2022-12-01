@@ -15,12 +15,14 @@ import {store, persistor} from './src/redux/stores/configureStore';
 import {
   isAudioAuthenticate,
   isIncodeAuthenticate,
+  isIncodeManual,
   isUserLoggedIn,
 } from './src/redux/auth/selectors';
 
 //Screens
 import Login from './src/screens/Login';
 import ThankYou from './src/screens/ThankYou';
+import ManualUser from './src/screens/ManualUser';
 import VoiceScreen from './src/screens/VoiceScreen';
 import TermsAndCondition from './src/screens/TermsAndCondition';
 import CustomerSupport from './src/screens/CustomerSupport';
@@ -28,15 +30,16 @@ import IncodeOnboarding from './src/screens/IncodeOnboarding';
 import {selfieVerificationApi} from './src/redux/auth/apis';
 import UserAlreadyExist from './src/screens/UserAlreadyExist';
 import {apiKey, apiUrl} from './src/utils/incodeCredentials';
-import { logout } from './src/redux/auth/actions';
+import {logout} from './src/redux/auth/actions';
 
 const Stack = createNativeStackNavigator();
 
 const AppContainer = () => {
   const accessToken = isUserLoggedIn();
+  const incodeManualUser = isIncodeManual();
   const audioAuthenticate = isAudioAuthenticate();
   const incodeAuthenticate = isIncodeAuthenticate();
-
+  
   if (accessToken) {
     if (!incodeAuthenticate) {
       return (
@@ -60,7 +63,19 @@ const AppContainer = () => {
           </Stack.Navigator>
         </>
       );
-    } else if (incodeAuthenticate && !audioAuthenticate) {
+    } else if (incodeAuthenticate && incodeManualUser && !audioAuthenticate) {
+      return (
+        <>
+          <Stack.Navigator initialRouteName="ManualUser">
+            <Stack.Screen
+              name="ManualUser"
+              component={ManualUser}
+              options={{animationEnabled: false, headerShown: false}}
+            />
+          </Stack.Navigator>
+        </>
+      );
+    } else if (incodeAuthenticate && !incodeManualUser && !audioAuthenticate) {
       return (
         <>
           <Stack.Navigator initialRouteName="VoiceScreen">
@@ -199,7 +214,9 @@ const App = () => {
   }, []);
 
   const socketConnection = () => {
-    var ws = new WebSocket('wss://staging-api.verifinow.io');
+    // const devSocketUrl = "wss://dev-api.verifinow.io";
+    const stagingSocketUrl = "wss://staging-api.verifinow.io";
+    var ws = new WebSocket(stagingSocketUrl);
 
     ws.onopen = () => {
       console.log('Connected to the server');
@@ -228,7 +245,7 @@ const App = () => {
       console.log('Disconnected. Check internet or server.', e);
       socketConnection();
     };
-  }
+  };
 
   return (
     <Provider store={store}>

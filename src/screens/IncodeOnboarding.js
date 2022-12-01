@@ -15,7 +15,7 @@ import {
   faceMatchInfo,
   userExist,
 } from '../redux/auth/actions';
-import {storeIncodeInfoApi} from '../redux/auth/apis';
+import {storeIncodeInfoApi, userScoreStatus} from '../redux/auth/apis';
 import {apiKey, apiUrl} from '../utils/incodeCredentials';
 import {isIncodeAuthenticate, isUserLoggedIn} from '../redux/auth/selectors';
 
@@ -31,8 +31,8 @@ const IncodeOnboarding = () => {
 
   const [showLoading, setShowLoading] = useState(true);
 
-  const storeIncodeData = status => {
-    storeIncodeInfoApi(accessToken, status);
+  const storeIncodeData = (status, reason) => {
+    storeIncodeInfoApi(accessToken, status, reason);
   };
 
   useEffect(() => {
@@ -97,7 +97,15 @@ const IncodeOnboarding = () => {
           navigation.navigate('TermsAndCondition');
         }
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error);
+        navigation.navigate('TermsAndCondition');
+        Snackbar.show({
+          text: 'Something went wrong, Please try again',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
+        });
+      });
   };
 
   useEffect(() => {
@@ -169,13 +177,18 @@ const IncodeOnboarding = () => {
             storeIncodeData('success');
             IncodeSdk.finishOnboardingFlow();
           } else {
-            Snackbar.show({
-              text: 'Invalid Information, Please Try Again',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#575DFB',
-            });
-            setShowLoading(true);
-            startOnboarding();
+            const response = await userScoreStatus();
+            if (response?.session_status === 'MANUAL') {
+              storeIncodeData('MANUAL', response?.reason);
+            } else {
+              Snackbar.show({
+                text: 'Invalid Information, Please Try Again',
+                duration: Snackbar.LENGTH_SHORT,
+                backgroundColor: '#575DFB',
+              });
+              setShowLoading(true);
+              startOnboarding();
+            }
           }
         },
       }),

@@ -22,7 +22,29 @@ export const fcmTokenApi = async fcmToken => {
   }
 };
 
-export const storeIncodeInfoApi = async (accessToken, status) => {
+export const userScoreStatus = async () => {
+  try {
+    const token = store.getState().auth.customerInfo?.access_token;
+    const interviewId = store.getState().auth?.customerInterviewId;
+    store.dispatch(showLoader(true));
+
+    const response = await fetch(SERVER_URL + `/user/sessionScore/${interviewId}`, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+    });
+    const resp = await response.json();
+    return resp?.data;
+  } catch (error) {
+    console.log('userScoreStatusError =>', error);
+  } finally {
+    store.dispatch(showLoader(false));
+  }
+};
+
+export const storeIncodeInfoApi = async (accessToken, status, reason) => {
   try {
     const customerInterviewId = store.getState().auth?.customerInterviewId;
     const customerToken = store.getState().auth?.customerToken;
@@ -50,11 +72,17 @@ export const storeIncodeInfoApi = async (accessToken, status) => {
           customer_uuid: customerUUID,
           customer_token: customerToken,
           customer_interViewId: customerInterviewId,
+          reason: reason ? reason : null
         }),
       });
       const resp = await response.json();
       if (resp?.onboarding) {
         store.dispatch(inCodeOnBoard(resp?.onboarding));
+        Snackbar.show({
+          text: resp?.message,
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#575DFB',
+        });
       } else {
         Snackbar.show({
           text: 'ID card verification failed, kindly try again',
